@@ -220,7 +220,7 @@ import jgame.impl.JGameError;
  * 
  */
 public abstract class JGEngine extends Applet implements JGEngineInterface {
-
+	private static final long serialVersionUID = -7811960246934582983L;
 
 	JREImage imageutil = new JREImage();
 
@@ -263,14 +263,12 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	Graphics bgg = null;
 
 	/* ===== Accelerometer stuff... By Mr. Hapke */
-	
 
 	private static final int ACCEL_AXIS = 0;
 	private static final int GYRO_AXIS = 1;
 	private static final int GYRO_ANGLE_AXIS = 1;
 	private static final InputType DATA_CLUSTER_IN_USE = InputType.JavaGyro;
 
-	
 	private AccelGyroMode accelGyroMode = AccelGyroMode.None;
 	protected final DataCluster cluster = new DataCluster();
 	// TODO Make this smarter based on the incoming data
@@ -392,7 +390,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	/* objects from engine */
 
 	@Override
-	public Vector getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox) {
+	public Vector<JGObject> getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox) {
 		return el.getObjects(prefix, cidmask, suspended_obj, bbox);
 	}
 
@@ -687,6 +685,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	 * tiles, and handling keyboard/mouse events.
 	 */
 	class JGCanvas extends Canvas {
+		private static final long serialVersionUID = 4304781400471635577L;
 
 		// part of the "official" method of handling keyboard focus
 		@Override
@@ -709,7 +708,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		 * paint interface that is used when the canvas is not initialised (for
 		 * displaying status info while starting up, loading files, etc.
 		 */
-		private ListCellRenderer initpainter = null;
+		private ListCellRenderer<Graphics> initpainter = null;
 		String progress_message = "Please wait, loading files .....";
 		String author_message = "JGame " + JGameVersionString;
 		/** for displaying progress bar, value between 0.0 - 1.0 */
@@ -720,7 +719,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			initpainter = null;
 		}
 
-		void setInitPainter(ListCellRenderer painter) {
+		void setInitPainter(ListCellRenderer<Graphics> painter) {
 			initpainter = painter;
 		}
 
@@ -877,31 +876,31 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	static final int FULLSTACKTRACE_DEBUG = 4;
 	static final int MSGSINPF_DEBUG = 8;
 
-
 	private static int dbgframelog_expiry = 80;
 	private JGFont debugmessage_font = new JGFont("Arial", 0, 12);
 	JGColor debug_auxcolor1 = JGColor.green;
 	JGColor debug_auxcolor2 = JGColor.magenta;
 
-	private Hashtable dbgframelogs = new Hashtable(); // old error msgs
-	private Hashtable dbgnewframelogs = new Hashtable(); // new error msgs
+	private Hashtable<String, Vector<String>> dbgframelogs = new Hashtable<String, Vector<String>>(); // old error msgs
+	private Hashtable<String, Vector<String>> dbgnewframelogs = new Hashtable<String, Vector<String>>(); // new error
+																											// msgs
 	/** flags indicating messages are new */
-	private Hashtable dbgframelogs_new = new Hashtable();
+	private Hashtable<String, String> dbgframelogs_new = new Hashtable<String, String>();
 	/** objects that dbgframes correspond to (JGObject) */
-	private Hashtable dbgframelogs_obj = new Hashtable();
+	private Hashtable<String, JGObject> dbgframelogs_obj = new Hashtable<String, JGObject>();
 	/** time that removed objects are dead (Integer) */
-	private Hashtable dbgframelogs_dead = new Hashtable();
+	private Hashtable<String, Integer> dbgframelogs_dead = new Hashtable<String, Integer>();
 
 	/** Refresh message logs for this frame. */
 	private void refreshDbgFrameLogs() {
-		dbgframelogs_new = new Hashtable(); // clear "new" flag
-		for (Enumeration e = dbgnewframelogs.keys(); e.hasMoreElements();) {
-			String source = (String) e.nextElement();
-			Object log = dbgnewframelogs.get(source);
+		dbgframelogs_new = new Hashtable<String, String>(); // clear "new" flag
+		for (Enumeration<String> e = dbgnewframelogs.keys(); e.hasMoreElements();) {
+			String source = e.nextElement();
+			Vector<String> log = dbgnewframelogs.get(source);
 			dbgframelogs.put(source, log);
 			dbgframelogs_new.put(source, "yes");
 		}
-		dbgnewframelogs = new Hashtable();
+		dbgnewframelogs = new Hashtable<String, Vector<String>>();
 	}
 
 	/** paint the messages */
@@ -909,9 +908,9 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		// we use an absolute font size
 		Font dbgfont = new Font(debugmessage_font.name, debugmessage_font.style, (int) debugmessage_font.size);
 		g.setFont(dbgfont);
-		for (Enumeration e = dbgframelogs.keys(); e.hasMoreElements();) {
-			String source = (String) e.nextElement();
-			Vector log = (Vector) dbgframelogs.get(source);
+		for (Enumeration<String> e = dbgframelogs.keys(); e.hasMoreElements();) {
+			String source = e.nextElement();
+			Vector<String> log = dbgframelogs.get(source);
 			if (dbgframelogs_new.containsKey(source)) {
 				// new message
 				setColor(g, el.fg_color);
@@ -922,14 +921,14 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			JGObject obj = el.getObject(source);
 			if (obj == null) {
 				// retrieve dead object
-				obj = (JGObject) dbgframelogs_obj.get(source);
+				obj = dbgframelogs_obj.get(source);
 				// message from deleted object
 				setColor(g, debug_auxcolor2);
 				if (obj != null) {
 					// tick dead timer
 					int deadtime = 0;
 					if (dbgframelogs_dead.containsKey(source))
-						deadtime = ((Integer) dbgframelogs_dead.get(source)).intValue();
+						deadtime = dbgframelogs_dead.get(source).intValue();
 					if (deadtime < dbgframelog_expiry) {
 						dbgframelogs_dead.put(source, new Integer(deadtime + 1));
 					} else {
@@ -942,8 +941,8 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			if (obj != null) {
 				JGPoint scaled = el.scalePos(obj.x - el.xofs, obj.y - el.yofs + lineheight / 3, false);
 				scaled.y -= lineheight * log.size();
-				for (Enumeration f = log.elements(); f.hasMoreElements();) {
-					g.drawString((String) f.nextElement(), scaled.x, scaled.y);
+				for (Enumeration<String> f = log.elements(); f.hasMoreElements();) {
+					g.drawString(f.nextElement(), scaled.x, scaled.y);
 					scaled.y += lineheight;
 				}
 			} else {
@@ -959,8 +958,8 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 					}
 					int ypos = el.scaleYPos(el.viewHeight(), false);
 					ypos -= lineheight * log.size();
-					for (Enumeration f = log.elements(); f.hasMoreElements();) {
-						g.drawString((String) f.nextElement(), 0, ypos);
+					for (Enumeration<String> f = log.elements(); f.hasMoreElements();) {
+						g.drawString(f.nextElement(), 0, ypos);
 						ypos += lineheight;
 					}
 				}
@@ -1028,9 +1027,9 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	@Override
 	public void dbgPrint(String source, String msg) {
 		if ((debugflags & MSGSINPF_DEBUG) != 0) {
-			Vector log = (Vector) dbgnewframelogs.get(source);
+			Vector<String> log = dbgnewframelogs.get(source);
 			if (log == null)
-				log = new Vector(5, 15);
+				log = new Vector<String>(5, 15);
 			if (log.size() < 19) {
 				log.add(msg);
 			} else if (log.size() == 19) {
@@ -1377,11 +1376,10 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			 * allows me to pass a Graphics. We shall move this stuff to JGCanvas later, i
 			 * suppose
 			 */
-			canvas.setInitPainter(new ListCellRenderer() {
+			canvas.setInitPainter(new ListCellRenderer<Graphics>() {
 				@Override
-				public Component getListCellRendererComponent(JList d1, Object value, int d2, boolean initialise,
+				public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2, boolean initialise,
 						boolean d4) {
-					Graphics g = (Graphics) value;
 					// if (initialise) {
 					// g.setColor(bg_color);
 					// g.fillRect(0,0,width,height);
@@ -1396,11 +1394,10 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			return;
 		}
 		el.is_inited = true;
-		canvas.setInitPainter(new ListCellRenderer() {
+		canvas.setInitPainter(new ListCellRenderer<Graphics>() {
 			@Override
-			public Component getListCellRendererComponent(JList d1, Object value, int d2, boolean initialise,
+			public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2, boolean initialise,
 					boolean d4) {
-				Graphics g = (Graphics) value;
 				// if (initialise) {
 				// g.setColor(bg_color);
 				// g.fillRect(0,0,width,height);
@@ -1719,7 +1716,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		el.flushAddList();
 		// the game state transition starts here
 		el.gamestate = el.gamestate_nextframe;
-		el.gamestate_nextframe = new Vector(10, 20);
+		el.gamestate_nextframe = new Vector<String>(10, 20);
 		el.gamestate_nextframe.addAll(el.gamestate);
 		// we assume that state transitions will not initiate new state
 		// transitions!
@@ -1738,9 +1735,9 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		el.frameFinished();
 	}
 
-	private void invokeGameStateMethods(String prefix, Vector states) {
-		for (Enumeration e = states.elements(); e.hasMoreElements();) {
-			String state = (String) e.nextElement();
+	private void invokeGameStateMethods(String prefix, Vector<String> states) {
+		for (Enumeration<String> e = states.elements(); e.hasMoreElements();) {
+			String state = e.nextElement();
 			jre.tryMethod(this, prefix + state, new Object[] {});
 		}
 	}
@@ -1763,8 +1760,8 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		invokeGameStateMethods("paintFrame", el.gamestate);
 		if ((debugflags & GAMESTATE_DEBUG) != 0) {
 			String state = "{";
-			for (Enumeration e = el.gamestate.elements(); e.hasMoreElements();) {
-				state += (String) e.nextElement();
+			for (Enumeration<String> e = el.gamestate.elements(); e.hasMoreElements();) {
+				state += e.nextElement();
 				if (e.hasMoreElements())
 					state += ",";
 			}
@@ -2314,7 +2311,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		}
 		return false;
 	}
-	
+
 	public AccelGyroMode getAccelGyroMode() {
 		return accelGyroMode;
 	}
@@ -2408,14 +2405,15 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	}
 
 	private DataReceive gyroReceiver;
-	// TODO controller project should have a native DataReceive api so this can be merged.
+	// TODO controller project should have a native DataReceive api so this can be
+	// merged.
 	private GyroDataUpdater nativeGyro;
 	private GyroStatus gyroStatus;
 
 	public void startAccelGyroFromUdp(int port) {
 		startAccelGyroFromUdp(port, (IDataReceiveListener) null);
 	}
-	
+
 	public void startAccelGyroFromUdp(int port, IDataReceiveListener... listeners) {
 		if (gyroReceiver == null || !gyroReceiver.isRunning()) {
 			gyroReceiver = new UdpDataReceive(cluster, port);
@@ -2448,7 +2446,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			GyroNetworkStatus gyroNetworkStatus = new GyroNetworkStatus();
 			gyroReceiver.add(gyroNetworkStatus);
 			gyroStatus = gyroNetworkStatus;
-			
+
 			if (listeners != null) {
 				for (IDataReceiveListener l : listeners) {
 					gyroReceiver.add(l);
@@ -2457,7 +2455,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			gyroReceiver.activateServer();
 		}
 	}
-	
+
 	public boolean startAccelGyroFromComm(ConnectedSerialPort serialPort, IDataReceiveListener... listeners) {
 		if (gyroReceiver == null || !gyroReceiver.isRunning()) {
 			gyroReceiver = new SerialDataReceive(cluster, serialPort);
@@ -2490,7 +2488,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			GyroNetworkStatus gyroNetworkStatus = new GyroNetworkStatus();
 			gyroReceiver.add(gyroNetworkStatus);
 			gyroStatus = gyroNetworkStatus;
-			
+
 			if (listeners != null) {
 				for (IDataReceiveListener l : listeners) {
 					gyroReceiver.add(l);
@@ -2510,7 +2508,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	public GyroStatus getGyroStatus() {
 		return gyroStatus;
 	}
-	
+
 	/* ====== animation ====== */
 
 	@Override

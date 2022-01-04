@@ -20,7 +20,7 @@ class JREImage implements JGImage {
 	static MediaTracker mediatracker=null;
 	DummyObserver observer = new DummyObserver();
 
-	static Hashtable loadedimages = new Hashtable(); /* filenames => Images */
+	static Hashtable<String, Image> loadedimages = new Hashtable<String, Image>(); 
 
 	class DummyObserver implements ImageObserver {
 		public DummyObserver() {}
@@ -31,7 +31,7 @@ class JREImage implements JGImage {
 	public void setComponent(Component comp) {
 		output_comp=comp;
 		mediatracker = new MediaTracker(output_comp);
-		loadedimages = new Hashtable();
+		loadedimages = new Hashtable<String, Image>();
 	}
 
 	public Image img=null;
@@ -50,7 +50,7 @@ class JREImage implements JGImage {
 	 * time.  If you want to remove an image from the cache, use purgeImage.
 	* Throws JGError when there was an error. */
 	public JGImage loadImage(String imgfile) {
-		Image img = (Image)loadedimages.get(imgfile);
+		Image img = loadedimages.get(imgfile);
 		if (img==null) {
 			URL imgurl = getClass().getResource(imgfile);
 			if (imgurl==null) {
@@ -86,22 +86,6 @@ class JREImage implements JGImage {
 		BufferedImage img = new BufferedImage(imgwidth,imgheight,
 			BufferedImage.TYPE_INT_ARGB);
 		img.setRGB(0,0,imgwidth,imgheight,imgdata,imgdataofs,linewidth);
-		return new JREImage(img);
-	}
-
-	/** Behaves like loadImage(String).  Returns null if there was an error. */
-	public static JGImage loadImage(URL imgurl) {
-		Image img = (Image)loadedimages.get(imgurl);
-		if (img==null) {
-			img = output_comp.getToolkit().createImage(imgurl);
-			loadedimages.put(imgurl,img);
-		}
-		try {
-			ensureLoaded(img);
-		} catch (Exception e) {
-			System.err.println("Error loading image "+imgurl);
-			return null;
-		}
 		return new JREImage(img);
 	}
 
@@ -162,7 +146,6 @@ class JREImage implements JGImage {
 
 	/** for angle, only increments of 90 are allowed */
 	public JGImage rotate(int angle) {
-		Image rot = null;
 		JGPoint size = getSize();
 		int [] buffer = getPixels();
 		int [] rotate = new int [size.x * size.y];
@@ -235,7 +218,6 @@ class JREImage implements JGImage {
 	}
 
 	public JGImage flip(boolean horiz,boolean vert) {
-		Image flipped = null;
 		JGPoint size = getSize();
 		int [] buffer = getPixels();
 		int [] flipbuf = new int [size.x * size.y];
@@ -306,7 +288,6 @@ class JREImage implements JGImage {
 	}
 
 	public JGImage crop(int x,int y, int width,int height) {
-		JGPoint size = getSize();
 		int [] buffer = getPixels(x,y, width,height);
 		return new JREImage( output_comp.createImage(
 			new MemoryImageSource(width,height,

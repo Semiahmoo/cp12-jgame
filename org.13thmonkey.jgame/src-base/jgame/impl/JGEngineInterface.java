@@ -441,7 +441,7 @@ public interface JGEngineInterface {
 	 * @param suspended_obj also count suspended objects
 	 * @param bbox          collision bounding box, null means ignore
 	 */
-	public Vector getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox);
+	public Vector<JGObject> getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox);
 
 	/**
 	 * Remove one particular object. The actual removal is done after the current

@@ -85,17 +85,17 @@ public class Highscore {
 
 	public static Highscore [] load(InputStream in)
 	throws IOException {
-		Vector highscores=new Vector(20,40);
+		Vector<Highscore> highscores=new Vector<Highscore>(20,40);
 		InputStreamReader inr = new InputStreamReader(in);
 		String line;
 		while ( (line=jgame.impl.EngineLogic.readline(inr)) != null ) {
-			Vector fields = new Vector(5,10);
+			Vector<String> fields = new Vector<String>(5,10);
 			// XXX we use "`" to represent empty string because
 			// StringTokenizer skips empty tokens
-			Vector tokens = jgame.impl.EngineLogic.tokenizeString(line,'\t');
+			Vector<String> tokens = jgame.impl.EngineLogic.tokenizeString(line,'\t');
 			//StringTokenizer toker = new StringTokenizer(line,"\t");
-			for (Enumeration e=tokens.elements(); e.hasMoreElements(); ) {
-				String tok = (String)e.nextElement();
+			for (Enumeration<String> e=tokens.elements(); e.hasMoreElements(); ) {
+				String tok = e.nextElement();
 				if (tok.equals("`")) tok="";
 				fields.addElement(tok);
 			}
@@ -116,9 +116,9 @@ public class Highscore {
 			}
 			highscores.addElement(hs);
 		}
-		Highscore [] ret = new Highscore [highscores.size()];
+		Highscore[] ret = new Highscore [highscores.size()];
 		for (int i=0; i<highscores.size(); i++) {
-			ret[i] = (Highscore)highscores.elementAt(i);
+			ret[i] = highscores.elementAt(i);
 		}
 		return ret;
 		//return (Highscore[])highscores.toArray(new Highscore[]{});

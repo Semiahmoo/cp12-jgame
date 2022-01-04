@@ -24,9 +24,9 @@ public class EngineLogic {
 	Random random;
 
 	/**
-	 * Platform implementation decides if window is resizeable. Resizeable
-	 * requires the implementation to keep the original unscaled images in
-	 * memory. Turn it off if you are short on memory.
+	 * Platform implementation decides if window is resizeable. Resizeable requires
+	 * the implementation to keep the original unscaled images in memory. Turn it
+	 * off if you are short on memory.
 	 */
 	public boolean is_resizeable = true;
 
@@ -37,12 +37,11 @@ public class EngineLogic {
 	boolean make_bitmask;
 
 	/**
-	 * prescale indicates if: (1) images should be prescaled to screen
-	 * resolution or kept at their original size; (2) tiles should be drawn
-	 * prescaled. It affects: scaled_tile*: scaled tile size, or original size
-	 * width/height: rounded to whole tile sizes or actual window size
-	 * *ofs_scaled: either scaled, or same as *ofs. Indirectly affected:
-	 * *_scale_fac canvas_*ofs
+	 * prescale indicates if: (1) images should be prescaled to screen resolution or
+	 * kept at their original size; (2) tiles should be drawn prescaled. It affects:
+	 * scaled_tile*: scaled tile size, or original size width/height: rounded to
+	 * whole tile sizes or actual window size *ofs_scaled: either scaled, or same as
+	 * *ofs. Indirectly affected: *_scale_fac canvas_*ofs
 	 */
 	boolean prescale;
 
@@ -72,14 +71,14 @@ public class EngineLogic {
 	/* game state. These vectors are always reused and not reconstructed. */
 
 	/** Engine game state */
-	public Vector gamestate = new Vector(10, 20);
+	public Vector<String> gamestate = new Vector<String>(10, 20);
 	/** New engine game state to be assigned at the next frame */
-	public Vector gamestate_nextframe = new Vector(10, 20);
+	public Vector<String> gamestate_nextframe = new Vector<String>(10, 20);
 	/**
 	 * New game states which the game has to transition to, and for which
 	 * start[state] have to be called.
 	 */
-	public Vector gamestate_new = new Vector(10, 20);
+	public Vector<String> gamestate_new = new Vector<String>(10, 20);
 	/**
 	 * indicates when engine is inside a parallel object update (moveObjects,
 	 * check*Collision)
@@ -87,7 +86,7 @@ public class EngineLogic {
 
 	boolean in_parallel_upd = false;
 
-	private Vector timers = new Vector(20, 40);
+	private Vector<JGTimer> timers = new Vector<JGTimer>(20, 40);
 
 	/**
 	 * signals that JGame globals are set, and exit code should null globals in
@@ -98,39 +97,40 @@ public class EngineLogic {
 	public boolean is_exited = false;
 	public String exit_message = "JGEngine exited successfully";
 
-	Hashtable animations = new Hashtable();
+	Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
 
 	/* images */
 
 	/**
-	 * Strings -&gt; JGImages, original size, nonexistence means there is no
-	 * image
+	 * Strings -&gt; JGImages, original size, nonexistence means there is no image
 	 */
-	public Hashtable images_orig = new Hashtable();
+	public Hashtable<String, JGImage> images_orig = new Hashtable<String, JGImage>();
 	/** JGPoint sizes of original images */
-	public Hashtable image_orig_size = new Hashtable();
+	public Hashtable<String, JGPoint> image_orig_size = new Hashtable<String, JGPoint>();
 	/**
 	 * Strings -&gt; JGImages, screen size, nonexistence indicates image is not
 	 * cached and needs to be generated from images_orig
 	 */
-	public Hashtable images = new Hashtable();
+	public Hashtable<String, JGImage> images = new Hashtable<String, JGImage>();
 
 	/** indicates that image is defined even if it has no Image */
-	public Hashtable images_exists = new Hashtable();
-	public Hashtable images_transp = new Hashtable();
+	public Hashtable<String, String> images_exists = new Hashtable<String, String>();
+	public Hashtable<Integer, String> images_transp = new Hashtable<Integer, String>();
 	/**
-	 * Hashtable: name to filename. Indicates that image with given name is
-	 * loaded from given filename
+	 * Hashtable: name to filename. Indicates that image with given name is loaded
+	 * from given filename
 	 */
-	public Hashtable images_loaded = new Hashtable();
+	public Hashtable<String, Object> images_loaded = new Hashtable<String, Object>();
 	/* Integers -> Objects, existence indicates transparency */
-	public Hashtable images_tile = new Hashtable(); /* Integers -> Strings */
-	public Hashtable images_bbox = new Hashtable(); /* Strings -> Rectangles */
-	public Hashtable images_tilecid = new Hashtable(); /*
-														 * Integers -> Integers
-														 */
+	public Hashtable<Integer, String> images_tile = new Hashtable<Integer, String>(); /* Integers -> Strings */
+	public Hashtable<String, JGRectangle> images_bbox = new Hashtable<String, JGRectangle>(); /*
+																								 * Strings -> Rectangles
+																								 */
+	public Hashtable<Integer, Integer> images_tilecid = new Hashtable<Integer, Integer>(); /*
+																							 * Integers -> Integers
+																							 */
 
-	public Hashtable imagemaps = new Hashtable(); /* Strings->ImageMaps */
+	public Hashtable<String, ImageMap> imagemaps = new Hashtable<String, ImageMap>(); /* Strings->ImageMaps */
 
 	public int alpha_thresh = 128;
 	public JGColor render_bg_color = null; // null means use bg_color
@@ -144,15 +144,15 @@ public class EngineLogic {
 	 */
 	public SortedArray objects = new SortedArray(80); /* String->JGObject */
 	SortedArray obj_to_remove = new SortedArray(40); /* String */
-	Vector obj_spec_to_remove = new Vector(20, 40); /* (String,Int) */
+	Vector<SuspendedInfo> obj_spec_to_remove = new Vector<SuspendedInfo>(20, 40);
 	SortedArray obj_to_add = new SortedArray(40); /* JGObject */
 
 	/* shared playfield dimensions */
 
 	/**
-	 * Total number of tiles on the playfield. Initially is the same as the nr
-	 * of tiles on the visible window (viewnrtilesx/y), but can be changed to
-	 * define a playfield larger than the visible window.
+	 * Total number of tiles on the playfield. Initially is the same as the nr of
+	 * tiles on the visible window (viewnrtilesx/y), but can be changed to define a
+	 * playfield larger than the visible window.
 	 */
 	public int nrtilesx, nrtilesy;
 	/** Size of one tile */
@@ -169,9 +169,9 @@ public class EngineLogic {
 	/* playfield dimensions from canvas */
 
 	/**
-	 * Actual scaled canvas size; that is, the size of the playfield view, which
-	 * may be smaller than the desired size of the game window to accommodate
-	 * for integer-sized scaled tiles.
+	 * Actual scaled canvas size; that is, the size of the playfield view, which may
+	 * be smaller than the desired size of the game window to accommodate for
+	 * integer-sized scaled tiles.
 	 */
 	public int width, height;
 	/** Derived info, used for modulo calculation */
@@ -180,8 +180,7 @@ public class EngineLogic {
 	public int pfwidth, pfheight;
 
 	/**
-	 * offset of playfield wrt canvas (may be negative if we crop the
-	 * playfield).
+	 * offset of playfield wrt canvas (may be negative if we crop the playfield).
 	 */
 	public int canvas_xofs = 0, canvas_yofs = 0;
 
@@ -189,8 +188,8 @@ public class EngineLogic {
 	public int scaledtilex, scaledtiley;
 
 	/**
-	 * Pending pixel offset of visible view on playfield, to be handled at the
-	 * next frame draw.
+	 * Pending pixel offset of visible view on playfield, to be handled at the next
+	 * frame draw.
 	 */
 	public int pendingxofs = 0, pendingyofs = 0;
 	/** Pixel offset of visible view on playfield. */
@@ -205,16 +204,16 @@ public class EngineLogic {
 	public int xofs_mid, yofs_mid;
 
 	/**
-	 * min_scale_fac is min (scalex,scaley). These are 1.0 until width, height
-	 * are defined
+	 * min_scale_fac is min (scalex,scaley). These are 1.0 until width, height are
+	 * defined
 	 */
 	public double x_scale_fac = 1.0, y_scale_fac = 1.0, min_scale_fac = 1.0;
 
 	/* playfield dimensions from engine */
 
 	/**
-	 * Desired width/height of game window; 0 is not initialised yet. Note that
-	 * the width/height of the canvas may be a little smaller to accommodate
+	 * Desired width/height of game window; 0 is not initialised yet. Note that the
+	 * width/height of the canvas may be a little smaller to accommodate
 	 * integer-sized scaled tiles.
 	 */
 	public int winwidth = 0, winheight = 0;
@@ -242,7 +241,7 @@ public class EngineLogic {
 			this.imgname = imgname;
 			this.wrapx = wrapx;
 			this.wrapy = wrapy;
-			tiles = new JGPoint((JGPoint) image_orig_size.get(imgname));
+			tiles = new JGPoint(image_orig_size.get(imgname));
 			tiles.x /= tilex;
 			tiles.y /= tiley;
 		}
@@ -252,7 +251,7 @@ public class EngineLogic {
 	 * BGImages: images to use behind transparent tiles. Element 0 is always
 	 * defined. Null indicates empty image.
 	 */
-	public Vector bg_images = new Vector(8, 20);
+	public Vector<BGImage> bg_images = new Vector<BGImage>(8, 20);
 	/** Indicates if wrap, multilayer, or offsets are in use */
 	public boolean bg_extended_mode = false;
 
@@ -266,8 +265,8 @@ public class EngineLogic {
 	public int offscreen_margin_x = 16, offscreen_margin_y = 16;
 
 	/**
-	 * the defined state of the physical cells of background, i.e. (0,0) is the
-	 * top left of background.
+	 * the defined state of the physical cells of background, i.e. (0,0) is the top
+	 * left of background.
 	 */
 	public boolean[][] bg_defined = null;
 
@@ -288,13 +287,13 @@ public class EngineLogic {
 	}
 
 	/**
-	 * Replacement for stringTokenizer. str will be split into a Vector of
-	 * tokens. Empty tokens are skipped. splitchar is a single character
-	 * indicating a token boundary (multiple characters are not used here). The
-	 * split characters are not included.
+	 * Replacement for stringTokenizer. str will be split into a Vector of tokens.
+	 * Empty tokens are skipped. splitchar is a single character indicating a token
+	 * boundary (multiple characters are not used here). The split characters are
+	 * not included.
 	 */
-	public static Vector tokenizeString(String str, char splitchar) {
-		Vector tok = new Vector(20, 50);
+	public static Vector<String> tokenizeString(String str, char splitchar) {
+		Vector<String> tok = new Vector<String>(20, 50);
 		int curidx = 0, nextidx;
 		while ((nextidx = str.indexOf(splitchar, curidx)) >= 0) {
 			if (nextidx > curidx)
@@ -338,10 +337,9 @@ public class EngineLogic {
 	}
 
 	/**
-	 * Generate absolute path from relative path by prepending the package name
-	 * of this class (and converting the "." to "/". A relative path is a path
-	 * without "/" or an URL protocol at the beginning. Absolute paths are not
-	 * changed.
+	 * Generate absolute path from relative path by prepending the package name of
+	 * this class (and converting the "." to "/". A relative path is a path without
+	 * "/" or an URL protocol at the beginning. Absolute paths are not changed.
 	 */
 	public String getAbsolutePath(Object pkg_obj, String filename) {
 		if (filename.indexOf("/") == 0 || (filename.indexOf("://") >= 0 && filename.indexOf("://") <= 5)) {
@@ -354,10 +352,10 @@ public class EngineLogic {
 			// String pkgname = getClass().getPackage().getName();
 			String pkgname = pkg_obj.getClass().getName();
 			String pkgname_path = "";
-			Vector tokens = tokenizeString(pkgname, '.');
+			Vector<String> tokens = tokenizeString(pkgname, '.');
 			// StringTokenizer toker = new StringTokenizer(pkgname,".");
-			for (Enumeration e = tokens.elements(); e.hasMoreElements();) {
-				String tok = (String) e.nextElement();
+			for (Enumeration<String> e = tokens.elements(); e.hasMoreElements();) {
+				String tok = e.nextElement();
 				if (e.hasMoreElements()) {
 					pkgname_path += tok + "/";
 				}
@@ -376,8 +374,7 @@ public class EngineLogic {
 	/**
 	 * Protected.
 	 * 
-	 * @param tileid
-	 *            tile id number as Integer object (note: 0 is undefined)
+	 * @param tileid tile id number as Integer object (note: 0 is undefined)
 	 * @return the image object, null means not defined
 	 */
 	public Object getTileImage(Integer tileid) {
@@ -394,15 +391,15 @@ public class EngineLogic {
 
 	/** Gets (non-scaled) image's physical size directly. */
 	public JGPoint getImageSize(String imgname) {
-		return (JGPoint) image_orig_size.get(imgname);
+		return image_orig_size.get(imgname);
 	}
 
 	/**
-	 * Quick version does not scale image on demand, and does not give an error
-	 * when image is not defined. DEPRECATED.
+	 * Quick version does not scale image on demand, and does not give an error when
+	 * image is not defined. DEPRECATED.
 	 */
 	public JGImage getImageQuick(String imgname) {
-		return (JGImage) images.get(imgname);
+		return images.get(imgname);
 	}
 
 	/**
@@ -411,9 +408,9 @@ public class EngineLogic {
 	public JGImage getImage(String imgname) {
 		if (!existsImage(imgname))
 			throw new JGameError("Image '" + imgname + "' not defined.", true);
-		JGImage img = (JGImage) images.get(imgname);
+		JGImage img = images.get(imgname);
 		if (img == null) {
-			img = (JGImage) images_orig.get(imgname);
+			img = images_orig.get(imgname);
 			if (img == null)
 				return null;
 			// convert indexed to display-compatible image
@@ -445,12 +442,12 @@ public class EngineLogic {
 	}
 
 	public JGImage getImageOrig(String imgname) {
-		return (JGImage) images_orig.get(imgname);
+		return images_orig.get(imgname);
 	}
 
 	/** protected */
 	public JGImage getSubImage(String mapname, int imgnr) {
-		ImageMap imgmap = (ImageMap) imagemaps.get(mapname);
+		ImageMap imgmap = imagemaps.get(mapname);
 		if (imgmap == null)
 			throw new JGameError("Image map '" + mapname + "' not found.", true);
 		JGPoint subcoord = imgmap.getImageCoord(imgnr);
@@ -484,9 +481,9 @@ public class EngineLogic {
 			while ((line = readline(in)) != null) {
 				eng.setProgressBar((double) lnr / (double) nr_lines);
 				int i = 0;
-				Vector tokens = tokenizeString(line, '\t');
-				for (Enumeration e = tokens.elements(); e.hasMoreElements();) {
-					fields[i++] = (String) e.nextElement();
+				Vector<String> tokens = tokenizeString(line, '\t');
+				for (Enumeration<String> e = tokens.elements(); e.hasMoreElements();) {
+					fields[i++] = e.nextElement();
 				}
 				if (i == 8) {
 					defineImageMap(eng, fields[0], fields[1], Integer.parseInt(fields[2]), Integer.parseInt(fields[3]),
@@ -526,11 +523,11 @@ public class EngineLogic {
 
 	/** Split a ';' separated list of words */
 	public static String[] splitList(String liststr) {
-		Vector list = tokenizeString(liststr, ';');
+		Vector<String> list = tokenizeString(liststr, ';');
 		String[] list_arr = new String[list.size()];
 		int i = 0;
-		for (Enumeration e = list.elements(); e.hasMoreElements();) {
-			list_arr[i] = (String) e.nextElement();
+		for (Enumeration<String> e = list.elements(); e.hasMoreElements();) {
+			list_arr[i] = e.nextElement();
 			i++;
 		}
 		return list_arr;
@@ -538,8 +535,8 @@ public class EngineLogic {
 
 	/**
 	 * Remove all information associated with image, including any cached image
-	 * data. Does not unload any image maps. XXX not quite finished; publish
-	 * this method when finished.
+	 * data. Does not unload any image maps. XXX not quite finished; publish this
+	 * method when finished.
 	 */
 	public void undefineImage(String name) {
 		// remove image from file cache
@@ -592,8 +589,8 @@ public class EngineLogic {
 	}
 
 	/**
-	 * passing -1 to top,left,width,height indicates these have to be taken from
-	 * the image dimensions.
+	 * passing -1 to top,left,width,height indicates these have to be taken from the
+	 * image dimensions.
 	 */
 	public void defineImage(String name, String tilename, int collisionid, JGImage img, String img_op, int top,
 			int left, int width, int height) {
@@ -690,8 +687,8 @@ public class EngineLogic {
 	/* ====== PF/view ====== */
 
 	/**
-	 * Offset that should be set on next frame draw. Offset is clipped so the
-	 * view always fits within playfield.
+	 * Offset that should be set on next frame draw. Offset is clipped so the view
+	 * always fits within playfield.
 	 */
 	void setPendingViewOffset(int xofs, int yofs) {
 		if (!pf_wrapx) {
@@ -771,10 +768,10 @@ public class EngineLogic {
 	}
 
 	/**
-	 * Add new object now. Old object with the same name is replaced
-	 * immediately, and its remove() method called. Skips calling objects.put
-	 * when skip_actual_add=true. This is useful if the caller optimises the
-	 * objects.add by adding an entire array at once
+	 * Add new object now. Old object with the same name is replaced immediately,
+	 * and its remove() method called. Skips calling objects.put when
+	 * skip_actual_add=true. This is useful if the caller optimises the objects.add
+	 * by adding an entire array at once
 	 */
 	void addObject(JGObject obj, boolean skip_actual_add) {
 		int idx = objects.get(obj.getName());
@@ -810,17 +807,15 @@ public class EngineLogic {
 
 	/** Mark all objects with given spec for removal. */
 	void markRemoveObjects(String prefix, int cidmask, boolean suspended_obj) {
-		obj_spec_to_remove.addElement(prefix);
-		obj_spec_to_remove.addElement(new Integer(cidmask));
-		obj_spec_to_remove.addElement(new Boolean(suspended_obj));
+		obj_spec_to_remove.addElement(new SuspendedInfo(prefix, cidmask, suspended_obj));
 	}
 
 	/**
-	 * Actually remove objects with given spec, including those in obj_to_add
-	 * list. Uses obj_to_remove as a temp variable. If anything is already in
-	 * obj_to_remove, it is left there. If do_remove_list is true, the objects
-	 * are removed and obj_to_remove is cleared. Otherwise, the objects to
-	 * remove are just added to obj_to_remove.
+	 * Actually remove objects with given spec, including those in obj_to_add list.
+	 * Uses obj_to_remove as a temp variable. If anything is already in
+	 * obj_to_remove, it is left there. If do_remove_list is true, the objects are
+	 * removed and obj_to_remove is cleared. Otherwise, the objects to remove are
+	 * just added to obj_to_remove.
 	 */
 	void doRemoveObjects(String prefix, int cidmask, boolean suspended_obj, boolean do_remove_list) {
 		int firstidx = getFirstObjectIndex(prefix);
@@ -863,10 +858,11 @@ public class EngineLogic {
 		// add all query results from object specs to obj_to_remove
 		// don't enumerate when no elements (which is about 90% of the time)
 		if (obj_spec_to_remove.size() != 0) {
-			for (Enumeration e = obj_spec_to_remove.elements(); e.hasMoreElements();) {
-				String prefix = (String) e.nextElement();
-				int cid = ((Integer) e.nextElement()).intValue();
-				boolean suspended_obj = ((Boolean) e.nextElement()).booleanValue();
+			for (Enumeration<SuspendedInfo> e = obj_spec_to_remove.elements(); e.hasMoreElements();) {
+				SuspendedInfo element = e.nextElement();
+				String prefix = element.s;
+				int cid = element.i;
+				boolean suspended_obj = element.b;
 				doRemoveObjects(prefix, cid, suspended_obj, false);
 			}
 			obj_spec_to_remove.removeAllElements();
@@ -1150,9 +1146,9 @@ public class EngineLogic {
 
 	/* objects from engine */
 
-	public Vector getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox) {
-		Vector objects_v = new Vector(50, 100);
-		int nr_obj = 0;
+	public Vector<JGObject> getObjects(String prefix, int cidmask, boolean suspended_obj, JGRectangle bbox) {
+		Vector<JGObject> objects_v = new Vector<JGObject>(50, 100);
+
 		JGRectangle obj_bbox = tmprect1;
 		int firstidx = getFirstObjectIndex(prefix);
 		int lastidx = getLastObjectIndex(prefix);
@@ -1245,8 +1241,8 @@ public class EngineLogic {
 
 	/**
 	 * Repaint those parts of BG which are undefined according to bg_defined.
-	 * Handles wraparound if applicable. If wraparound is on, xofs and yofs may
-	 * be any value.
+	 * Handles wraparound if applicable. If wraparound is on, xofs and yofs may be
+	 * any value.
 	 */
 	public void repaintBG(JGEngineInterface eng) {
 		if (bg_defined == null)
@@ -1520,16 +1516,15 @@ public class EngineLogic {
 		// easily find the appropriate bg_defined entry
 		/*
 		 * if (pf_wrapx) { int bg_x1_mod = moduloFloor(tilexofs-1,nrtilesx); int
-		 * bg_x2_mod = moduloFloor(tilexofs+viewnrtilesx+2,nrtilesx); if
-		 * (bg_x1_mod < bg_x2_mod) { if (x_mod < bg_x1_mod || x_mod >=
-		 * bg_x2_mod) return; } else { if (x_mod < bg_x1_mod && x_mod >=
-		 * bg_x2_mod) return; } } else { if ((x-tilexofs < -1) || (x-tilexofs >=
-		 * viewnrtilesx+2) ) return; } if (pf_wrapy) { int bg_y1_mod =
-		 * moduloFloor(tileyofs-1,nrtilesy); int bg_y2_mod =
-		 * moduloFloor(tileyofs+viewnrtilesy+2,nrtilesy); if (bg_y1_mod <
-		 * bg_y2_mod) { if (y_mod < bg_y1_mod || y_mod >= bg_y2_mod) return; }
-		 * else { if (y_mod < bg_y1_mod && y_mod >= bg_y2_mod) return; } } else
-		 * { if ((y-tileyofs < -1) || (y-tileyofs >= viewnrtilesy+2)) return; }
+		 * bg_x2_mod = moduloFloor(tilexofs+viewnrtilesx+2,nrtilesx); if (bg_x1_mod <
+		 * bg_x2_mod) { if (x_mod < bg_x1_mod || x_mod >= bg_x2_mod) return; } else { if
+		 * (x_mod < bg_x1_mod && x_mod >= bg_x2_mod) return; } } else { if ((x-tilexofs
+		 * < -1) || (x-tilexofs >= viewnrtilesx+2) ) return; } if (pf_wrapy) { int
+		 * bg_y1_mod = moduloFloor(tileyofs-1,nrtilesy); int bg_y2_mod =
+		 * moduloFloor(tileyofs+viewnrtilesy+2,nrtilesy); if (bg_y1_mod < bg_y2_mod) {
+		 * if (y_mod < bg_y1_mod || y_mod >= bg_y2_mod) return; } else { if (y_mod <
+		 * bg_y1_mod && y_mod >= bg_y2_mod) return; } } else { if ((y-tileyofs < -1) ||
+		 * (y-tileyofs >= viewnrtilesy+2)) return; }
 		 */
 		// System.out.print("/x"+x+"y"+y);
 		// XXX modulo is wrong!
@@ -1628,8 +1623,7 @@ public class EngineLogic {
 	 * basically encodes the four characters of the string into the bytes of the
 	 * four-byte integer. The ID code is NOT related to the collision ID (CID).
 	 * 
-	 * @param tilestr
-	 *            tilename, null or empty string -&gt; ID = 0
+	 * @param tilestr tilename, null or empty string -&gt; ID = 0
 	 */
 	public int tileStrToID(String tilestr) {
 		if (tilestr == null)
@@ -1655,12 +1649,11 @@ public class EngineLogic {
 	}
 
 	/**
-	 * Convert tile ID code to tile name (as used internally). The ID code
-	 * basically encodes the four characters of the string into the bytes of the
-	 * four-byte integer. The ID code is NOT related to the collision ID (CID).
+	 * Convert tile ID code to tile name (as used internally). The ID code basically
+	 * encodes the four characters of the string into the bytes of the four-byte
+	 * integer. The ID code is NOT related to the collision ID (CID).
 	 * 
-	 * @param tilestr
-	 *            tile ID, tileid==0 -&gt; tilename = empty string
+	 * @param tilestr tile ID, tileid==0 -&gt; tilename = empty string
 	 */
 	public String tileIDToStr(int tileid) {
 		if (tileid == 0)
@@ -1708,10 +1701,10 @@ public class EngineLogic {
 		return tiler;
 		/*
 		 * if (tiler.x >= 0) { tiler.x /= tilex; } else { tiler.x =
-		 * (tiler.x-tilex+1)/tilex; } if (tiler.y >= 0) { tiler.y /= tiley; }
-		 * else { tiler.y = (tiler.y-tiley+1)/tiley; } tiler.width = 1 - tiler.x
-		 * + (r.x + r.width - 1) / tilex; tiler.height = 1 - tiler.y + (r.y +
-		 * r.height - 1) / tiley; return tiler;
+		 * (tiler.x-tilex+1)/tilex; } if (tiler.y >= 0) { tiler.y /= tiley; } else {
+		 * tiler.y = (tiler.y-tiley+1)/tiley; } tiler.width = 1 - tiler.x + (r.x +
+		 * r.width - 1) / tilex; tiler.height = 1 - tiler.y + (r.y + r.height - 1) /
+		 * tiley; return tiler;
 		 */
 	}
 
@@ -1743,11 +1736,11 @@ public class EngineLogic {
 
 	public void setTilesMulti(int xofs, int yofs, String[] tilemap) {
 		for (int y = 0; y < tilemap.length; y++) {
-			Vector tokens = tokenizeString(tilemap[y], ' ');
+			Vector<String> tokens = tokenizeString(tilemap[y], ' ');
 			// StringTokenizer toker = new StringTokenizer(tilemap[y]," ");
 			int x = 0;
-			for (Enumeration e = tokens.elements(); e.hasMoreElements();) {
-				setTile(x + xofs, y + yofs, (String) e.nextElement());
+			for (Enumeration<String> e = tokens.elements(); e.hasMoreElements();) {
+				setTile(x + xofs, y + yofs, e.nextElement());
 				x++;
 			}
 		}
@@ -1775,7 +1768,7 @@ public class EngineLogic {
 
 	public void drawImageString(JGEngineInterface eng, String string, double x, double y, int align, String imgmap,
 			int char_offset, int spacing, boolean pf_relative) {
-		ImageMap map = (ImageMap) imagemaps.get(imgmap);
+		ImageMap map = imagemaps.get(imgmap);
 		if (map == null)
 			throw new JGameError("Font image map '" + imgmap + "' not found.", true);
 		if (align == 0) {
@@ -1857,9 +1850,9 @@ public class EngineLogic {
 	}
 
 	/**
-	 * The scale methods also take care of wraparound modulo calculations. This
-	 * is only applicable to pf_relative positions. The modulo semantics is that
-	 * of moduloPos.
+	 * The scale methods also take care of wraparound modulo calculations. This is
+	 * only applicable to pf_relative positions. The modulo semantics is that of
+	 * moduloPos.
 	 */
 
 	public int scaleXPos(double x, boolean pf_relative) {
@@ -1911,9 +1904,8 @@ public class EngineLogic {
 	/* misc */
 
 	/**
-	 * Initialise some derived pf dimension variables. Also clears the tile map
-	 * if !is_inited. Clears the resized image cache if is_inited and
-	 * is_resizeable.
+	 * Initialise some derived pf dimension variables. Also clears the tile map if
+	 * !is_inited. Clears the resized image cache if is_inited and is_resizeable.
 	 */
 	public void initPF() {
 		int allowed_width = winwidth + crop_left + crop_right;
@@ -1965,7 +1957,7 @@ public class EngineLogic {
 				// clear resized images so that they are reconstructed
 				// from images_orig
 				// XXX maybe pre-load images to prevent hiccups?
-				images = new Hashtable();
+				images = new Hashtable<String, JGImage>();
 			}
 		}
 	}
@@ -2044,7 +2036,7 @@ public class EngineLogic {
 	/** protected */
 	public void tickTimers() {
 		for (int i = timers.size() - 1; i >= 0; i--) {
-			JGTimer timer = (JGTimer) timers.elementAt(i);
+			JGTimer timer = timers.elementAt(i);
 			if (timer.tick(gamespeed)) {
 				timers.removeElement(timer);
 			}
@@ -2080,7 +2072,7 @@ public class EngineLogic {
 
 	public boolean inGameState(String state) {
 		for (int i = gamestate.size() - 1; i >= 0; i--) {
-			if (((String) gamestate.elementAt(i)).equals(state))
+			if (gamestate.elementAt(i).equals(state))
 				return true;
 		}
 		return false;
@@ -2088,7 +2080,7 @@ public class EngineLogic {
 
 	public boolean inGameStateNextFrame(String state) {
 		for (int i = gamestate_nextframe.size() - 1; i >= 0; i--) {
-			if (((String) gamestate_nextframe.elementAt(i)).equals(state))
+			if (gamestate_nextframe.elementAt(i).equals(state))
 				return true;
 		}
 		return false;
@@ -2105,7 +2097,7 @@ public class EngineLogic {
 	}
 
 	public Animation getAnimation(String id) {
-		return (Animation) animations.get(id);
+		return animations.get(id);
 	}
 
 	/* computation */
@@ -2223,11 +2215,11 @@ public class EngineLogic {
 	/* === audio === */
 
 	/** clipid -} filename */
-	public Hashtable audioclips = new Hashtable();
+	public Hashtable<String, String> audioclips = new Hashtable<String, String>();
 
 	/**
-	 * Associate given clipid with a filename. Files are loaded from the
-	 * resource path. Java 1.2+ supports at least: midi and wav files.
+	 * Associate given clipid with a filename. Files are loaded from the resource
+	 * path. Java 1.2+ supports at least: midi and wav files.
 	 */
 
 	public void defineAudioClip(Object pkg_obj, String clipid, String filename) {

@@ -76,8 +76,7 @@ import java.io.*;
 public abstract class StdGame extends JGEngine {
 
 	// XXX can levelDone and lifeLost be triggered simultaneously? (ramjet)
-
-	/* settings */
+	private static final long serialVersionUID = 5670218709921311681L;
 
 	/** Flag indicating that audio is enabled */
 	public boolean audioenabled=true;
