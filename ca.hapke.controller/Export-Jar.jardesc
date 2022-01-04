@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="ca.hapke.jgame.helloworld/lib/ca.hapke.net.udp.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/ca.hapke.net.udp/Export-Jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=ca.hapke.net.udp/src&lt;ca.hapke.net.udp.ui{FrmUdpSender.java[FrmUdpSender" manifestLocation="/org.13thmonkey.jgame/Export-MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <file path="/ca.hapke.net.udp/.project"/>
+        <file path="/ca.hapke.net.udp/export-jar.xml"/>
+        <file path="/ca.hapke.net.udp/.classpath"/>
+        <javaElement handleIdentifier="=ca.hapke.net.udp/src"/>
+    </selectedElements>
+</jardesc>

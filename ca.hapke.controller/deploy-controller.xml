@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project ca.hapke.controller with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+	<property name="dir.deploy" value="${dir.workspace}/ca.hapke.rpi.deploy"/>
+	<property name="dir.deploy.jars" value="${dir.deploy}/jars"/>
+	<!--<property name="dir.deploy.jars" value="P:/deploy"/> -->
+    <target name="create_run_jar">
+        <jar destfile="${dir.deploy.jars}/ca.hapke.controller.jar">
+            <manifest>
+                <attribute name="Main-Class" value="ca.hapke.controller.ui.FrmControllerSender"/>
+                <attribute name="Class-Path" value=". ca.hapke.util.jar  ca.hapke.gyro.jar pi4j-core.jar pi4j-gpio-extension.jar vecmath-1.5.2.jar jSerialComm-2.7.0.jar glazedlists-1.11.0.jar"/>
+            </manifest>
+            <fileset dir="${dir.buildfile}/target/classes"/>
+        </jar>
+        <mkdir dir="${dir.deploy.jars}"/>
+		<echo message="  copying to:   ${dir.deploy.jars}" />
+        <copy todir="${dir.deploy.jars}" overwrite="true">
+        	<fileset dir="${dir.buildfile}/lib"></fileset>
+    	</copy>
+    </target>
+</project>

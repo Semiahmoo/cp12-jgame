@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="find-dependancies"
+	name="find-dependancies for Project ca.hapke.controller"
+	xmlns:resolver="antlib:org.apache.maven.resolver.ant">
+
+	<property name="dir.project" value="." />
+	<property name="dir.dependancies"
+		value="${dir.project}/dependancies" />
+	<!-- <property name="dir.lib" value="${dir.project}/lib" /> -->
+
+	<taskdef uri="antlib:org.apache.maven.resolver.ant"
+		resource="org/apache/maven/resolver/ant/antlib.xml"
+		classpath="lib/maven-resolver-ant-tasks-1.3.1-uber.jar" />
+
+	<target name="dir.check">
+		<condition property="to.doesntexist">
+			<not>
+				<available file="${dir.dependancies}" type="dir" />
+			</not>
+		</condition>
+	</target>
+	<target name="create-folder" depends="dir.check"
+		if="to.doesntexist">
+		<mkdir dir="${dir.dependancies}" />
+	</target>
+
+
+
+	<target name="find-dependancies" depends="create-folder">
+		<echo message="DEPENDANCY FINDER!" />
+		<echo>[mvn home]: ${maven.home}"</echo>
+		<echo message=" [m2 home]: $M2_HOME" />
+		
+		<!-- <resolve> <dependencies pomRef="pom" /> <remoterepos refid="all" /> 
+			<path refid="cp" classpath="compile" /> <path refid="tp" classpath="test" 
+			/> </resolve> -->
+	</target>
+
+</project>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project ca.hapke.controller with libraries in sub-folder">
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<!--define folder properties-->
+	<property name="dir.buildfile" value="." />
+	<property name="dir.workspace" value="C:/Hapke/workspaces/development3" />
+	<property name="dir.jarfile" value="C:/Hapke/workspaces/development3-git/git-cp12/rpi/ca.hapke.rpi.deploy/jars" />
+	<target name="create_run_jar">
+		<jar destfile="${dir.jarfile}/ca.hapke.controller.jar">
+			<manifest>
+				<attribute name="Main-Class" value="ca.hapke.controller.ui.FrmControllerSender" />
+				<attribute name="Class-Path" value=". ca.hapke.controller_lib/vecmath-1.5.2.jar ca.hapke.controller_lib/pi4j-core.jar ca.hapke.controller_lib/pi4j-device.jar ca.hapke.controller_lib/pi4j-example.jar ca.hapke.controller_lib/pi4j-gpio-extension.jar ca.hapke.controller_lib/vecmath-1.5.2.jar ca.hapke.controller_lib/jSerialComm-2.7.0.jar ca.hapke.controller_lib/glazedlists-1.11.0.jar ca.hapke.controller_lib/slf4j-api-1.7.30.jar ca.hapke.controller_lib/jssc-2.9.4.jar ca.hapke.controller_lib/native-lib-loader-2.3.6.jar ca.hapke.controller_lib/hamcrest-core-1.3.jar" />
+			</manifest>
+			<fileset dir="${dir.buildfile}/target/classes" />
+			<fileset dir="C:/Hapke/workspaces/development3-git/jgame/ca.hapke.util/target/classes" />
+			<fileset dir="C:/Hapke/workspaces/development3-git/jgame/ca.hapke.gyro/bin" />
+			<fileset dir="C:/Hapke/workspaces/development3-git/jgame/com.pi4j.pi4j/bin" />
+		</jar>
+		<delete dir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<mkdir dir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Hapke/workspaces/development3-git/jgame/ca.hapke.gyro/lib/vecmath-1.5.2.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Hapke/workspaces/development3-git/jgame/com.pi4j.pi4j/lib/pi4j-core.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Hapke/workspaces/development3-git/jgame/com.pi4j.pi4j/lib/pi4j-device.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Hapke/workspaces/development3-git/jgame/com.pi4j.pi4j/lib/pi4j-example.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Hapke/workspaces/development3-git/jgame/com.pi4j.pi4j/lib/pi4j-gpio-extension.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="${dir.buildfile}/lib/vecmath-1.5.2.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<!--<copy file="C:/Users/hapke_n/.m2/repository/com/fazecast/jSerialComm/2.7.0/jSerialComm-2.7.0.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" /> -->
+		<copy file="C:/Users/hapke_n/.m2/repository/com/glazedlists/glazedlists/1.11.0/glazedlists-1.11.0.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Users/hapke_n/.m2/repository/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Users/hapke_n/.m2/repository/io/github/java-native/jssc/2.9.4/jssc-2.9.4.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Users/hapke_n/.m2/repository/org/scijava/native-lib-loader/2.3.6/native-lib-loader-2.3.6.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+		<copy file="C:/Users/hapke_n/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" todir="${dir.jarfile}/ca.hapke.controller_lib" />
+	</target>
+</project>
