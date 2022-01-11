@@ -37,6 +37,7 @@ import javax.vecmath.Point3d;
 import ca.hapke.controller.data.DataReceive;
 import ca.hapke.controller.data.IDataReceiveListener;
 import ca.hapke.controller.serial.ConnectedSerialPort;
+import ca.hapke.controller.serial.SerialCommManager;
 import ca.hapke.controller.serial.SerialDataReceive;
 import ca.hapke.controller.udp.UdpDataReceive;
 import ca.hapke.gyro.GyroDataUpdater;
@@ -45,6 +46,7 @@ import ca.hapke.gyro.data.AbstractGyroDataType;
 import ca.hapke.gyro.data.AdcDataType;
 import ca.hapke.gyro.data.DataCluster;
 import ca.hapke.gyro.data.DataType.InputType;
+import ca.odell.glazedlists.EventList;
 import jgame.JGColor;
 import jgame.JGFont;
 import jgame.JGImage;
@@ -275,6 +277,24 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	protected final AbstractGyroDataType accelGyroStatus = (AbstractGyroDataType) cluster.getData(DATA_CLUSTER_IN_USE);
 	protected final AdcDataType joystickStatus = (AdcDataType) cluster.getData(InputType.ADC);
 
+
+	// USB->SERIAL.COMM MANAGEMENT
+	protected boolean displaySerialInfo = false;
+	protected int key_serial_activate = 92; // '\' key
+	protected int key_serial_choose_port = 93; // ']' key
+	protected int key_serial_on_off = 91;  	// '[' key
+	protected static final int SERIAL_OFF = 0;
+	protected static final int SERIAL_SCANNING = 1;
+	protected static final int SERIAL_ON = 2;
+	
+	protected SerialCommManager serialManager = new SerialCommManager();
+	protected EventList<String> portsEvents = serialManager.getPortsEvents();
+	protected ConnectedSerialPort serialConnection = null;
+
+	protected String serialPortActive = "N/A";
+	protected int serialMode = SERIAL_OFF;
+	protected int portIndex = 0;
+	
 	/* ====== images ====== */
 
 	@Override
@@ -2405,8 +2425,6 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	}
 
 	private DataReceive gyroReceiver;
-	// TODO controller project should have a native DataReceive api so this can be
-	// merged.
 	private GyroDataUpdater nativeGyro;
 	private GyroStatus gyroStatus;
 

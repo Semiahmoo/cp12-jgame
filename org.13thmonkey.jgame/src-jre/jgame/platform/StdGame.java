@@ -1,5 +1,7 @@
 package jgame.platform;
 import jgame.*;
+import jssc.SerialPortException;
+
 import java.awt.*;
 import javax.swing.JOptionPane;
 
@@ -610,6 +612,50 @@ public abstract class StdGame extends JGEngine {
 		} else if (inGameState("GameOver")) {
 			if (getKey(key_continuegame)) gotoTitle();
 		}
+		
+		if (getKey(key_serial_on_off) || getKey(key_serial_choose_port) || getKey(key_serial_activate)) {
+			displaySerialInfo = true;
+		}
+		if (getKey(key_serial_on_off)) {
+			clearKey(key_serial_on_off);
+			if (serialMode > 0) {
+				serialMode = 0;
+				if (serialConnection != null) {
+					serialConnection.close();
+					serialConnection = null;
+					serialPortActive = "N/A";
+				}
+			} else {
+				serialMode = SERIAL_SCANNING;
+				portIndex = 0;
+				serialManager.updatePorts();
+			}
+		} else if (getKey(key_serial_choose_port)) {
+			
+			clearKey(key_serial_choose_port);
+
+			portIndex++;
+			if (portIndex >= portsEvents.size())
+				portIndex = 0;
+		} else if (getKey(key_serial_activate)) {
+			clearKey(key_serial_activate);
+
+			serialPortActive = portsEvents.get(portIndex);
+			
+			try {
+				serialConnection = serialManager.connect(serialPortActive);
+				if (serialConnection != null) {
+					boolean val = startAccelGyroFromComm(serialConnection);
+					if (val) {
+						serialMode = SERIAL_ON;
+					}				
+				}
+			} catch (SerialPortException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	/* default doFrame... actions; note we still have to define the others.*/
@@ -716,6 +762,39 @@ public abstract class StdGame extends JGEngine {
 		setFont(status_font);
 		setColor(status_color);
 		drawString("Score "+score,status_l_margin,0,-1);
+		
+		if (displaySerialInfo) {
+			String serialOutput;
+			if (serialMode == SERIAL_SCANNING) {
+				setColor(JGColor.yellow);
+				int qty = portsEvents.size();
+				if (qty > 0 && portIndex < qty) {
+					serialPortActive = portsEvents.get(portIndex);
+				} else {
+					serialPortActive = "N/A";
+				}
+				serialOutput = "Select Port: " + serialPortActive;
+			} else if (serialMode == SERIAL_ON) {
+				setColor(JGColor.green);
+				serialOutput = "ON: " + serialPortActive;
+			} else {
+				setColor(JGColor.red);
+				serialOutput = "OFF";
+			}
+			drawString("Serial " + serialOutput, 100, 17, -1);
+
+			setColor(JGColor.grey);
+			int y = 15;
+			int i = 0;
+			while (i < 258) {
+				if (getKey(i)) {
+					drawString(i + "->" + getKeyDescStatic(i), 100, y, -1);
+
+					y += 12;
+				}
+				i++;
+			}
+		}
 		GyroStatus gyroStatus = getGyroStatus();
 		if (gyroStatus != null) {
 			DataStatus currentGyro = gyroStatus.tick();
