@@ -20,18 +20,13 @@ public class SerialCommManager {
 		}
 	}
 
-	public ConnectedSerialPort connect(String port) {
+	public ConnectedSerialPort connect(String port) throws SerialPortException {
 		ConnectedSerialPort cp = null;
-		try {
-			SerialPort commPort = new SerialPort(port);
-			boolean result = commPort.openPort();
+		SerialPort commPort = new SerialPort(port);
+		boolean result = commPort.openPort();
 
-			if (result) {
-				cp = new ConnectedSerialPort(commPort);
-			}
-		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (result) {
+			cp = new ConnectedSerialPort(commPort);
 		}
 		return cp;
 	}

@@ -25,6 +25,7 @@ import ca.hapke.controller.udp.UdpDataTransmit;
 import ca.hapke.gyro.ArcadeButtonUpdater;
 import ca.hapke.gyro.GyroDataUpdater;
 import ca.hapke.gyro.JoystickDataUpdater;
+import jssc.SerialPortException;
 
 /**
  * 
@@ -192,10 +193,14 @@ public class FrmControllerSender extends AccelGyroFrame {
 		System.out.println("SERIAL!");
 		String port = lstSerialPorts.getSelectedValue();
 		if (port != null) {
-			ConnectedSerialPort connection = serialManager.connect(port);
-			SerialDataTransmit serialTransmitter = new SerialDataTransmit(cluster, connection);
-			transmitter = serialTransmitter;
-			return true;
+			try {
+				ConnectedSerialPort connection = serialManager.connect(port);
+				SerialDataTransmit serialTransmitter = new SerialDataTransmit(cluster, connection);
+				transmitter = serialTransmitter;
+				return true;
+			} catch (SerialPortException e) {
+				JOptionPane.showMessageDialog(this, "Serial Port Failed to open:\n" + e.getMessage(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		return false;
 	}

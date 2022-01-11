@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -17,6 +18,7 @@ import ca.hapke.controller.data.IDataReceiveListener;
 import ca.hapke.controller.data.ReceiveMode;
 import ca.hapke.controller.serial.SerialDataReceive;
 import ca.hapke.controller.udp.UdpDataReceive;
+import jssc.SerialPortException;
 
 /**
  * @author Mr. Hapke
@@ -166,12 +168,16 @@ public class FrmControllerReceiver extends AccelGyroFrame {
 	protected boolean doStartSerial() {
 		String port = lstSerialPorts.getSelectedValue();
 
-		serialConnection = serialManager.connect(port);
-		if (serialConnection != null) {
-			receiverServer = new SerialDataReceive(cluster, serialConnection);
-			receiverServer.add(statusListener);
-			boolean val = receiverServer.activateServer();
-			return val;
+		try {
+			serialConnection = serialManager.connect(port);
+			if (serialConnection != null) {
+				receiverServer = new SerialDataReceive(cluster, serialConnection);
+				receiverServer.add(statusListener);
+				boolean val = receiverServer.activateServer();
+				return val;
+			}
+		} catch (SerialPortException e) {
+			JOptionPane.showMessageDialog(this, "Serial Port Failed to open:\n" + e.getMessage(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
 		}
 		return false;
 	}
