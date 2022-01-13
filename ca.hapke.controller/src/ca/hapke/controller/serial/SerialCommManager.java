@@ -10,6 +10,8 @@ import jssc.SerialPortList;
  * @author Mr. Hapke
  */
 public class SerialCommManager {
+	public static final boolean SERIAL_COMM_DEBUG = false;
+	//	 public static final boolean SERIAL_COMM_DEBUG = true;
 
 	private EventList<String> portsEvents = new BasicEventList<String>();
 

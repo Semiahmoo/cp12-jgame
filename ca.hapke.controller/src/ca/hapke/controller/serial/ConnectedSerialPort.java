@@ -45,8 +45,9 @@ public class ConnectedSerialPort {
 						}
 
 					} catch (SerialPortException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						if (SerialCommManager.SERIAL_COMM_DEBUG) {
+							e.printStackTrace();
+						}
 					}
 				} else if (event.isCTS()) { // CTS line has changed state
 					if (event.getEventValue() == 1) { // line is ON
@@ -71,19 +72,22 @@ public class ConnectedSerialPort {
 		try {
 			port.addEventListener(listener);
 		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (SerialCommManager.SERIAL_COMM_DEBUG) {
+				e.printStackTrace();
+			}
 		}
 
 		return true;
 	}
+
 	public void close() {
 		try {
 			if (port.isOpened())
 				port.closePort();
 		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (SerialCommManager.SERIAL_COMM_DEBUG) {
+				e.printStackTrace();
+			}
 		}
 		status = SerialPortStatus.Closed;
 	}

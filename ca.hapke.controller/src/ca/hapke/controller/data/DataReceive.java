@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.hapke.controller.serial.SerialCommManager;
 import ca.hapke.controller.udp.UdpUtil;
 import ca.hapke.gyro.data.DataCluster;
 import ca.hapke.gyro.data.DataType;
@@ -41,12 +42,16 @@ public abstract class DataReceive {
 				int exp = Byte.toUnsignedInt(crcExpected);
 				int act = Byte.toUnsignedInt(crcActual);
 				int delta = exp - act;
-				System.out.println("Crc fail: Expected[" +  exp + "] -- Actual[" +  act + "] --> Delta[" + delta	
-						+ "]");
+
+				if (SerialCommManager.SERIAL_COMM_DEBUG) {
+					System.out
+							.println("Crc fail: Expected[" + exp + "] -- Actual[" + act + "] --> Delta[" + delta + "]");
+				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (SerialCommManager.SERIAL_COMM_DEBUG) {
+				e.printStackTrace();
+			}
 		}
 	}
 

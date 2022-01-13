@@ -51,10 +51,12 @@ public class ByteBuffer {
 
 		// HACK BUFFER OVERFLOW ESCAPE?
 		if (sizeIncrements > 6) {
-			System.err.println("DUMP ALL DATA");
+			if (SerialCommManager.SERIAL_COMM_DEBUG) {
+				System.err.println("DUMP ALL DATA");
+			}
 			clear();
 		}
-		
+
 		int fromIndex = end;
 		byte[] targetArray = buf;
 		// enqueue without worrying about escaping characters
@@ -178,8 +180,10 @@ public class ByteBuffer {
 	private void increaseCapacity(int capacity) {
 		byte[] newBuf = new byte[capacity];
 		sizeIncrements++;
-		System.out.println("increaseCapacity: " + sizeIncrements);
-
+		if (SerialCommManager.SERIAL_COMM_DEBUG) {
+			System.out.println("increaseCapacity: " + sizeIncrements);
+		}
+		
 		// copy from start to (end or EndOfArray)
 		int i = start;
 		int j = 0;

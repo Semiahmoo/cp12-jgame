@@ -26,10 +26,10 @@ public class DataCluster {
 
 //	private List<DataType> inputs = new ArrayList<DataType>();
 
-	private Map<InputType, DataType> typeMap = new HashMap<>();
+	private Map<InputType, DataType<?>> typeMap = new HashMap<>();
 
-	public DataType getData(InputType it) {
-		DataType val = typeMap.get(it);
+	public DataType<?> getData(InputType it) {
+		DataType<?> val = typeMap.get(it);
 		if (val == null) {
 			val = DataType.create(it);
 			typeMap.put(it, val);
@@ -37,7 +37,7 @@ public class DataCluster {
 		return val;
 	}
 
-	public void add(DataType dt) {
+	public void add(DataType<?> dt) {
 //		return inputs.add(arg0);
 		typeMap.put(dt.type, dt);
 	}
@@ -50,7 +50,7 @@ public class DataCluster {
 		return typeMap.size();
 	}
 
-	public Collection<DataType> getValues() {
+	public Collection<DataType<?>> getValues() {
 		return typeMap.values();
 	}
 }

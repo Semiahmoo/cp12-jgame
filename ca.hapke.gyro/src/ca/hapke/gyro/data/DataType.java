@@ -47,7 +47,7 @@ public abstract class DataType<T> {
 
 	protected abstract T[] createData(int dims);
 
-	public static DataType create(InputType t) {
+	public static DataType<?> create(InputType t) {
 		switch (t) {
 		case ADC:
 			return new AdcDataType();
