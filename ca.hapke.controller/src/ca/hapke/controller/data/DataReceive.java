@@ -122,7 +122,9 @@ public abstract class DataReceive {
 	public abstract boolean shutdownServer();
 
 	public void add(IDataReceiveListener l) {
-		listeners.add(l);
+		if (l != null) {
+			listeners.add(l);
+		}
 	}
 
 	public boolean isRunning() {

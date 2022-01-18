@@ -39,7 +39,7 @@ public class JoystickDataUpdater {
 
 	}
 
-	private static final int UPDATE_FREQUENCY = 100;
+	private static final int UPDATE_FREQUENCY = 50;
 
 	private final GpioController gpio = GpioFactory.getInstance();
 	private ADS1115GpioProvider gpioProvider;
@@ -63,7 +63,7 @@ public class JoystickDataUpdater {
 			};
 			gpioProvider.setProgrammableGainAmplifier(ProgrammableGainAmplifierValue.PGA_4_096V, ADS1115Pin.ALL);
 
-			gpioProvider.setEventThreshold(500, ADS1115Pin.ALL);
+			gpioProvider.setEventThreshold(200, ADS1115Pin.ALL);
 			// (a value less than 50 ms is not permitted)
 			gpioProvider.setMonitorInterval(UPDATE_FREQUENCY);
 

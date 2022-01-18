@@ -11,7 +11,7 @@
     <!-- <property name="dir.deploy.jars" value="P:/deploy"/> -->
     <target name="create_run_jar">
         <jar destfile="${dir.deploy.jars}/ca.hapke.gyro.jar">
-            <fileset dir="${dir.buildfile}/bin"/>
+            <fileset dir="${dir.buildfile}/target/classes"/>
             <manifest>
             	<!--  <attribute name="Class-Path" value=". ca.hapke.util.jar raspoid-1.0-all.jar vecmath-1.5.2.jar pi4j-core.jar pi4j-gpio-extension.jar"/> -->
                 <attribute name="Class-Path" value=". ca.hapke.util.jar vecmath-1.5.2.jar pi4j-core.jar pi4j-gpio-extension.jar"/>

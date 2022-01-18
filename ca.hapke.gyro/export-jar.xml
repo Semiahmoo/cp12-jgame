@@ -14,7 +14,7 @@
             <manifest>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="${dir.buildfile}/bin"/>
+            <fileset dir="${dir.buildfile}/target/classes"/>
         </jar>
         <delete dir="${dir.jarfile}/gyro-hello_lib"/>
         <mkdir dir="${dir.jarfile}/gyro-hello_lib"/>
