@@ -7,8 +7,8 @@ import java.util.Map;
 import ca.hapke.gyro.data.DataType.InputType;
 
 /**
- * @author Mr. Hapke
- * TODO add if an InputType is active -- that way we can tell if we're getting JavaGyro or CsGyro
+ * @author Mr. Hapke TODO add if an InputType is active -- that way we can tell
+ *         if we're getting JavaGyro or CsGyro
  */
 public class DataCluster {
 //
@@ -45,6 +45,10 @@ public class DataCluster {
 //	public DataType get(int arg0) {
 //		return inputs.get(arg0);
 //	}
+
+	public boolean isActive(InputType it) {
+		return typeMap.containsKey(it);
+	}
 
 	public int size() {
 		return typeMap.size();
