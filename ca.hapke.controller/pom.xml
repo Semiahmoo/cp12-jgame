@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>ca.hapke</groupId>
 			<artifactId>util</artifactId>
-			<version>[0.2.0,]</version>
+			<version>[0.3.0,]</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
