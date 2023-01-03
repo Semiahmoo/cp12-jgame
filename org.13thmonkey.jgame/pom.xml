@@ -7,7 +7,7 @@
 		<dependency>
 			<groupId>ca.hapke</groupId>
 			<artifactId>util</artifactId>
-			<version>[0.2.0,]</version>
+			<version>[0.3.0,]</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.hapke</groupId>
@@ -24,6 +24,12 @@
 		    <groupId>javax.vecmath</groupId>
 		    <artifactId>vecmath</artifactId>
 		    <version>1.5.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.glazedlists/glazedlists -->
+		<dependency>
+			<groupId>com.glazedlists</groupId>
+			<artifactId>glazedlists</artifactId>
+			<version>1.11.0</version>
 		</dependency>
   </dependencies>
   <build>

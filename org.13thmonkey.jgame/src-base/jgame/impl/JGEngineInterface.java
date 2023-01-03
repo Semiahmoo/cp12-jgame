@@ -2,6 +2,7 @@ package jgame.impl;
 
 import java.util.Vector;
 
+import ca.hapke.gyro.data.DataType.InputType;
 import jgame.JGColor;
 import jgame.JGFont;
 import jgame.JGImage;
@@ -1620,6 +1621,11 @@ public interface JGEngineInterface {
 	 */
 	public boolean hasAccelerometer();
 
+	/**
+	 * returns true if the cluster has a data point for that InputType Hacked up by Mr. Hapke
+	 */
+	public boolean isSensorActive(InputType it);
+
 	/** added by Mr. Hapke */
 	public boolean hasGyro();
 
@@ -1658,6 +1664,9 @@ public interface JGEngineInterface {
 
 	/** get accel/gyroscope twist angle (positive = ccw) */
 	public double getYaw();
+	
+	/** get double[3] vector representing overall rotation Pitch-Roll-Yaw */
+	public double[] getPitchRollYawVec();
 
 	/** get double[3] vector representing orientation */
 	public double[] getAccelVec();
@@ -1665,8 +1674,11 @@ public interface JGEngineInterface {
 	/** get double[3] vector representing joystick inputs */
 	public double[] getJoystickVec();
 
-	/** get double[3] vector representing tilt */
+	/** get double[3] vector representing rotation/second */
 	public double[] getGyroVec();
+	
+	/** get double[3] vector representing tilt */
+	public double[] getGyroAngleVec();
 
 	/* ====== animation ====== */
 

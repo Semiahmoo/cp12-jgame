@@ -7,9 +7,11 @@ import javax.swing.JOptionPane;
 
 import ca.hapke.gyro.api.DataStatus;
 import ca.hapke.gyro.api.GyroStatus;
+import ca.hapke.gyro.data.DataType;
 
 import java.awt.event.*;
 import java.io.*;
+import java.util.Collection;
 /** A basic framework for a game.  It supports an animation and game timer,
 * object creation at fixed intervals, score, lives, levels, configurable keys.
 * There are title, start-level, next-level, death, game-over, and highscore
@@ -613,6 +615,10 @@ public abstract class StdGame extends JGEngine {
 			if (getKey(key_continuegame)) gotoTitle();
 		}
 		
+		if (getKey(key_gyro_display)) {
+			displayAngleInfo = !displayAngleInfo;
+			clearKey(key_gyro_display);
+		}
 		if (getKey(key_serial_on_off) || getKey(key_serial_choose_port) || getKey(key_serial_activate)) {
 			displaySerialInfo = true;
 		}
@@ -653,6 +659,7 @@ public abstract class StdGame extends JGEngine {
 			} catch (SerialPortException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				serialMode = SERIAL_OFF;
 			}
 		}
 		
@@ -763,6 +770,13 @@ public abstract class StdGame extends JGEngine {
 		setColor(status_color);
 		drawString("Score "+score,status_l_margin,0,-1);
 		
+		if (lives_img==null) {
+			drawString("Lives "+lives,viewWidth()-status_r_margin,0,1);
+		} else {
+			drawCount(lives-1, lives_img, viewWidth()-status_r_margin,0,
+				- getImageSize(lives_img).x-2 );
+		}
+		
 		if (displaySerialInfo) {
 			String serialOutput;
 			if (serialMode == SERIAL_SCANNING) {
@@ -783,30 +797,49 @@ public abstract class StdGame extends JGEngine {
 			}
 			drawString("Serial " + serialOutput, 100, 17, -1);
 
-			setColor(JGColor.grey);
-			int y = 15;
-			int i = 0;
-			while (i < 258) {
-				if (getKey(i)) {
-					drawString(i + "->" + getKeyDescStatic(i), 100, y, -1);
-
-					y += 12;
+//			setColor(JGColor.grey);
+//			int y = 15;
+//			int i = 0;
+//			while (i < 258) {
+//				if (getKey(i)) {
+//					drawString(i + "->" + getKeyDescStatic(i), 100, y, -1);
+//
+//					y += 12;
+//				}
+//				i++;
+//			}
+		}
+		if (displayAngleInfo) {
+			int xLoc = displayAngleInfoX;
+			int yLoc = displayAngleInfoY;
+			int fontSize = (int) status_font.size;
+			
+			Collection<DataType<?>> types = cluster.getValues();
+			for (DataType<?> dt : types) {
+				setColor(JGColor.cyan);
+				drawString(dt.type.toString(), xLoc+10, yLoc, 0);
+				yLoc += fontSize;
+				
+				for (int i = 0; i < dt.getDimensions(); i++) {
+					String name = dt.getName(i);
+					String valStr = dt.getValueString(i);
+					setColor(JGColor.green);
+					drawString(name, xLoc, yLoc, 1);
+					setColor(JGColor.white);
+					drawString(valStr, xLoc+10, yLoc, -1);
+					
+					yLoc += fontSize;
 				}
-				i++;
+				yLoc += fontSize / 2;
 			}
 		}
+		
 		GyroStatus gyroStatus = getGyroStatus();
 		if (gyroStatus != null) {
 			DataStatus currentGyro = gyroStatus.tick();
 			drawString("Gyro: "+currentGyro,status_l_margin, status_font.size + 2,-1);
 		}
 		
-		if (lives_img==null) {
-			drawString("Lives "+lives,viewWidth()-status_r_margin,0,1);
-		} else {
-			drawCount(lives-1, lives_img, viewWidth()-status_r_margin,0,
-				- getImageSize(lives_img).x-2 );
-		}
 	}
 	/** Default displays class name as title, and "press [key_startgame] to
 	 * start" below it. */

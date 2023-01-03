@@ -255,7 +255,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	/// ** Keymap equivalent of mouse button. */
 	// public static final int KeyMouse1=256, KeyMouse2=257, KeyMouse3=258;
 
-	Graphics buf_gfx = null;
+	protected Graphics buf_gfx = null;
 
 	/* images */
 
@@ -266,9 +266,9 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 
 	/* ===== Accelerometer stuff... By Mr. Hapke */
 
-	private static final int ACCEL_AXIS = 0;
-	private static final int GYRO_AXIS = 1;
-	private static final int GYRO_ANGLE_AXIS = 1;
+//	private static final int ACCEL_AXIS = 0;
+//	private static final int GYRO_AXIS = 1;
+//	private static final int GYRO_ANGLE_AXIS = 1;
 	private static final InputType DATA_CLUSTER_IN_USE = InputType.JavaGyro;
 
 	private AccelGyroMode accelGyroMode = AccelGyroMode.None;
@@ -277,16 +277,19 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	protected final AbstractGyroDataType accelGyroStatus = (AbstractGyroDataType) cluster.getData(DATA_CLUSTER_IN_USE);
 	protected final AdcDataType joystickStatus = (AdcDataType) cluster.getData(InputType.ADC);
 
-
 	// USB->SERIAL.COMM MANAGEMENT
 	protected boolean displaySerialInfo = false;
+	protected boolean displayAngleInfo = false;
+	protected int displayAngleInfoX = 350;
+	protected int displayAngleInfoY = 20;
+	protected int key_gyro_display = 61; // '=' key
 	protected int key_serial_activate = 92; // '\' key
 	protected int key_serial_choose_port = 93; // ']' key
-	protected int key_serial_on_off = 91;  	// '[' key
+	protected int key_serial_on_off = 91; // '[' key
 	protected static final int SERIAL_OFF = 0;
 	protected static final int SERIAL_SCANNING = 1;
 	protected static final int SERIAL_ON = 2;
-	
+
 	protected SerialCommManager serialManager = new SerialCommManager();
 	protected EventList<String> portsEvents = serialManager.getPortsEvents();
 	protected ConnectedSerialPort serialConnection = null;
@@ -294,7 +297,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	protected String serialPortActive = "N/A";
 	protected int serialMode = SERIAL_OFF;
 	protected int portIndex = 0;
-	
+
 	/* ====== images ====== */
 
 	@Override
@@ -1398,8 +1401,8 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 			 */
 			canvas.setInitPainter(new ListCellRenderer<Graphics>() {
 				@Override
-				public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2, boolean initialise,
-						boolean d4) {
+				public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2,
+						boolean initialise, boolean d4) {
 					// if (initialise) {
 					// g.setColor(bg_color);
 					// g.fillRect(0,0,width,height);
@@ -1416,8 +1419,8 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 		el.is_inited = true;
 		canvas.setInitPainter(new ListCellRenderer<Graphics>() {
 			@Override
-			public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2, boolean initialise,
-					boolean d4) {
+			public Component getListCellRendererComponent(JList<? extends Graphics> d1, Graphics g, int d2,
+					boolean initialise, boolean d4) {
 				// if (initialise) {
 				// g.setColor(bg_color);
 				// g.fillRect(0,0,width,height);
@@ -2317,6 +2320,14 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	}
 
 	@Override
+	public boolean isSensorActive(InputType it) {
+		if (cluster == null) {
+			return false;
+		}
+		return cluster.isActive(it);
+	}
+
+	@Override
 	public boolean hasGyro() {
 		switch (accelGyroMode) {
 		case NativeLive:
@@ -2338,23 +2349,79 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 
 	@Override
 	public double getAccelX() {
-		return accelGyroStatus.getData(ACCEL_AXIS).x;
+		return accelGyroStatus.getData(getAccelAxisId()).x;
 	}
 
 	@Override
 	public double getAccelY() {
-		return accelGyroStatus.getData(ACCEL_AXIS).y;
+		return accelGyroStatus.getData(getAccelAxisId()).y;
 	}
 
 	@Override
 	public double getAccelZ() {
-		return accelGyroStatus.getData(ACCEL_AXIS).z;
+		return accelGyroStatus.getData(getAccelAxisId()).z;
 	}
 
 	@Override
 	public double[] getAccelVec() {
-		Point3d accel = accelGyroStatus.getData(ACCEL_AXIS);
+		Point3d accel = accelGyroStatus.getData(getAccelAxisId());
 		return new double[] { accel.x, accel.y, accel.z };
+	}
+
+	private int getAccelAxisId() {
+		switch (DATA_CLUSTER_IN_USE) {
+		case ADC:
+			break;
+		case ArcadeButton:
+			break;
+		case CsGyroRelay:
+			break;
+		case JavaGyro:
+			return 1;
+		}
+		return 0;
+	}
+
+	private int getGyroAngleAxisId() {
+		switch (DATA_CLUSTER_IN_USE) {
+		case ADC:
+			break;
+		case ArcadeButton:
+			break;
+		case CsGyroRelay:
+			break;
+		case JavaGyro:
+			return 2;
+		}
+		return 0;
+	}
+
+	private int getGyroRotationAxisId() {
+		switch (DATA_CLUSTER_IN_USE) {
+		case ADC:
+			break;
+		case ArcadeButton:
+			break;
+		case CsGyroRelay:
+			break;
+		case JavaGyro:
+			return 3;
+		}
+		return 0;
+	}
+
+	private int getPitchRollAxisId() {
+		switch (DATA_CLUSTER_IN_USE) {
+		case ADC:
+			break;
+		case ArcadeButton:
+			break;
+		case CsGyroRelay:
+			break;
+		case JavaGyro:
+			return 4;
+		}
+		return 0;
 	}
 
 	@Override
@@ -2374,53 +2441,65 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	}
 
 	@Override
+	public double[] getGyroAngleVec() {
+		Point3d gyro = accelGyroStatus.getData(getGyroAngleAxisId());
+		return new double[] { gyro.x, gyro.y, gyro.z };
+	}
+
+	@Override
 	public double getGyroAngleX() {
-		return accelGyroStatus.getData(GYRO_ANGLE_AXIS).x;
+		return accelGyroStatus.getData(getGyroAngleAxisId()).x;
 	}
 
 	@Override
 	public double getGyroAngleY() {
-		return accelGyroStatus.getData(GYRO_ANGLE_AXIS).y;
+		return accelGyroStatus.getData(getGyroRotationAxisId()).y;
 	}
 
 	@Override
 	public double getGyroAngleZ() {
-		return accelGyroStatus.getData(GYRO_ANGLE_AXIS).z;
-	}
-
-	@Override
-	public double getGyroX() {
-		return accelGyroStatus.getData(GYRO_AXIS).x;
-	}
-
-	@Override
-	public double getGyroY() {
-		return accelGyroStatus.getData(GYRO_AXIS).y;
-	}
-
-	@Override
-	public double getGyroZ() {
-		return accelGyroStatus.getData(GYRO_AXIS).z;
-	}
-
-	@Override
-	public double getPitch() {
-		return accelGyroStatus.getData(4).x;
-	}
-
-	@Override
-	public double getRoll() {
-		return accelGyroStatus.getData(4).y;
-	}
-
-	@Override
-	public double getYaw() {
-		return accelGyroStatus.getData(4).z;
+		return accelGyroStatus.getData(getGyroRotationAxisId()).z;
 	}
 
 	@Override
 	public double[] getGyroVec() {
-		Point3d gyro = accelGyroStatus.getData(GYRO_AXIS);
+		Point3d gyro = accelGyroStatus.getData(getGyroRotationAxisId());
+		return new double[] { gyro.x, gyro.y, gyro.z };
+	}
+
+	@Override
+	public double getGyroX() {
+		return accelGyroStatus.getData(getGyroRotationAxisId()).x;
+	}
+
+	@Override
+	public double getGyroY() {
+		return accelGyroStatus.getData(getGyroRotationAxisId()).y;
+	}
+
+	@Override
+	public double getGyroZ() {
+		return accelGyroStatus.getData(getGyroRotationAxisId()).z;
+	}
+
+	@Override
+	public double getPitch() {
+		return accelGyroStatus.getData(getPitchRollAxisId()).x;
+	}
+
+	@Override
+	public double getRoll() {
+		return accelGyroStatus.getData(getPitchRollAxisId()).y;
+	}
+
+	@Override
+	public double getYaw() {
+		return accelGyroStatus.getData(getPitchRollAxisId()).z;
+	}
+
+	@Override
+	public double[] getPitchRollYawVec() {
+		Point3d gyro = accelGyroStatus.getData(getPitchRollAxisId());
 		return new double[] { gyro.x, gyro.y, gyro.z };
 	}
 
@@ -2525,6 +2604,20 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 
 	public GyroStatus getGyroStatus() {
 		return gyroStatus;
+	}
+
+	public void enableDisplayAngleInfo() {
+		this.displayAngleInfo = true;
+	}
+
+	public void enableDisplayAngleInfo(int x, int y) {
+		this.displayAngleInfo = true;
+		this.displayAngleInfoX = x;
+		this.displayAngleInfoY = y;
+	}
+
+	public void disableDisplayAngleInfo(boolean displayAngleInfo) {
+		this.displayAngleInfo = false;
 	}
 
 	/* ====== animation ====== */
