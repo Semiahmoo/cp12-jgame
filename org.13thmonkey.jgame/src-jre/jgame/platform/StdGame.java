@@ -170,6 +170,8 @@ public abstract class StdGame extends JGEngine {
 
 	/** Horizontal margins to be used by status displays, default 12 pixels. */
 	public int status_l_margin=12,status_r_margin=12;
+	/** Vertical margins to be used by status displays, default 3 pixels. */
+	public int status_t_margin=3;
 
 	/** Font to use to display score */
 	public JGFont status_font = new JGFont("Courier",Font.BOLD,12);
@@ -768,12 +770,12 @@ public abstract class StdGame extends JGEngine {
 	public void paintFrame() {
 		setFont(status_font);
 		setColor(status_color);
-		drawString("Score "+score,status_l_margin,0,-1);
+		drawString("Score "+score,status_l_margin,status_t_margin,-1);
 		
 		if (lives_img==null) {
-			drawString("Lives "+lives,viewWidth()-status_r_margin,0,1);
+			drawString("Lives "+lives,viewWidth()-status_r_margin,status_t_margin,1);
 		} else {
-			drawCount(lives-1, lives_img, viewWidth()-status_r_margin,0,
+			drawCount(lives-1, lives_img, viewWidth()-status_r_margin,status_t_margin,
 				- getImageSize(lives_img).x-2 );
 		}
 		
