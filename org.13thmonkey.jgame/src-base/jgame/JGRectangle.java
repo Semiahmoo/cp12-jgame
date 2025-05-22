@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
  * @author Mr. Hapke
- *
  */
 public class JGRectangle {
+	private List<RectangleData> datas = new ArrayList<>();
+	private final RectangleData bounds = new RectangleData();
+
 	public JGRectangle() {
 		this(0, 0, 0, 0);
 	}
@@ -32,6 +33,16 @@ public class JGRectangle {
 		updateBoundingBox();
 	}
 
+	public JGRectangle clone() {
+		RectangleData[] clonedDatas = new RectangleData[datas.size()];
+		for (int i = 0; i < datas.size(); i++) {
+			RectangleData mine = datas.get(i);
+			RectangleData cloned = new RectangleData(mine);
+			clonedDatas[i] = cloned;
+		}
+		return new JGRectangle(clonedDatas);
+	}
+
 	public JGRectangle(RectangleData[] inputs) {
 
 		for (RectangleData otherData : inputs)
@@ -40,31 +51,37 @@ public class JGRectangle {
 	}
 
 	private void updateBoundingBox() {
-		int x = Integer.MAX_VALUE;
-		int y = Integer.MAX_VALUE;
+		int xLeft = Integer.MAX_VALUE;
+		int yTop = Integer.MAX_VALUE;
 
-		int right = Integer.MIN_VALUE;
-		int bottom = Integer.MIN_VALUE;
+		int xRight = Integer.MIN_VALUE;
+		int yBottom = Integer.MIN_VALUE;
 		// boolean firstPass = true;
 
 		for (RectangleData d : datas) {
-			x = Math.min(d.x, x);
-			y = Math.min(d.y, y);
-
-			int dRight = d.x + d.width;
-			int dHeight = d.y + d.height;
-			if (dRight > right) {
-				right = dRight;
+			int dx = d.x;
+			if (dx < xLeft) {
+				xLeft = dx;
 			}
-			if (dHeight > bottom) {
-				bottom = dHeight;
+			int dy = d.y;
+			if (dy < yTop) {
+				yTop = dy;
+			}
+
+			int dRight = dx + d.width;
+			int dHeight = dy + d.height;
+			if (dRight > xRight) {
+				xRight = dRight;
+			}
+			if (dHeight > yBottom) {
+				yBottom = dHeight;
 			}
 		}
 
-		bounds.x = x;
-		bounds.y = y;
-		bounds.width = right - x;
-		bounds.height = bottom - y;
+		bounds.x = xLeft;
+		bounds.y = yTop;
+		bounds.width = xRight - xLeft;
+		bounds.height = yBottom - yTop;
 	}
 
 	public void copyFrom(JGRectangle r) {
@@ -77,11 +94,8 @@ public class JGRectangle {
 			datas.add(new RectangleData(otherData, x2, y2));
 	}
 
-	private List<RectangleData> datas = new ArrayList<>();
-	private final RectangleData bounds = new RectangleData();
-
 	public int getX() {
-		return datas.get(0).x;
+		return bounds.x;
 	}
 
 	public void setX(int x) {
@@ -92,7 +106,7 @@ public class JGRectangle {
 	}
 
 	public int getY() {
-		return datas.get(0).y;
+		return bounds.y;
 	}
 
 	public void setY(int y) {
@@ -102,8 +116,7 @@ public class JGRectangle {
 	}
 
 	public int getWidth() {
-		// FIXME The width isn't an overall width.
-		return datas.get(0).width;
+		return bounds.width;
 	}
 
 	public void setWidth(int width) {
@@ -113,8 +126,7 @@ public class JGRectangle {
 	}
 
 	public int getHeight() {
-		// FIXME The Height isn't an overall Height.
-		return datas.get(0).height;
+		return bounds.height;
 	}
 
 	public void setHeight(int height) {
@@ -134,12 +146,6 @@ public class JGRectangle {
 	}
 
 	public boolean intersects(JGRectangle other) {
-		// for (RectangleData data : datas)
-		// for (RectangleData otherData : other.datas)
-		// if (data.intersects(otherData))
-		// return true;
-		// return false;
-
 		return getIntersecting(other) != null;
 	}
 
@@ -149,5 +155,20 @@ public class JGRectangle {
 		StackTraceElement[] stackTraceElements = Thread.getAllStackTraces().get(Thread.currentThread());
 		for (StackTraceElement e : stackTraceElements)
 			System.out.println(e + "Line: " + e.getLineNumber());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("JGRectangle [(");
+		builder.append(getX());
+		builder.append(", ");
+		builder.append(getY());
+		builder.append(") + <");
+		builder.append(getWidth());
+		builder.append(", ");
+		builder.append(getHeight());
+		builder.append(">]");
+		return builder.toString();
 	}
 }

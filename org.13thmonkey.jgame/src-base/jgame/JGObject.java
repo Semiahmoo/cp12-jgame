@@ -275,29 +275,13 @@ public class JGObject {
 	 * xspeed and yspeed to the absolute value of the supplied speed. Passing a
 	 * value of exactly 0.0 sets the dir to 0.
 	 */
-/*	public void setSpeedAbs(double xspeed, double yspeed) {
-		if (xspeed < 0.0) {
-			xdir = -1;
-			this.xspeed = -xspeed;
-		} else if (xspeed == 0.0) {
-			xdir = 0;
-			this.xspeed = 0;
-		} else {
-			xdir = 1;
-			this.xspeed = xspeed;
-		}
-		if (yspeed < 0.0) {
-			ydir = -1;
-			this.yspeed = -yspeed;
-		} else if (yspeed == 0.0) {
-			ydir = 0;
-			this.yspeed = 0;
-		} else {
-			ydir = 1;
-			this.yspeed = yspeed;
-		}
-	}
-*/
+	/*
+	 * public void setSpeedAbs(double xspeed, double yspeed) { if (xspeed < 0.0) {
+	 * xdir = -1; this.xspeed = -xspeed; } else if (xspeed == 0.0) { xdir = 0;
+	 * this.xspeed = 0; } else { xdir = 1; this.xspeed = xspeed; } if (yspeed < 0.0)
+	 * { ydir = -1; this.yspeed = -yspeed; } else if (yspeed == 0.0) { ydir = 0;
+	 * this.yspeed = 0; } else { ydir = 1; this.yspeed = yspeed; } }
+	 */
 	/** Set speed and direction in one go. */
 	public void setDirSpeed(int xdir, int ydir, double xspeed, double yspeed) {
 		this.xdir = xdir;
@@ -353,7 +337,6 @@ public class JGObject {
 			}
 		}
 	}
-
 
 	/**
 	 * Set ID of image to display; clear animation. Passing null clears the image.
@@ -724,11 +707,10 @@ public class JGObject {
 	 */
 	public JGRectangle getBBox() {
 		if (bbox != null)
-			return new JGRectangle(bbox.getX() + (int) x, bbox.getY() + (int) y, bbox.getWidth(), bbox.getHeight());
+			return bbox.clone();
 		updateImageBBox();
 		if (imgbbox != null) {
-			return new JGRectangle(imgbbox.getX() + (int) x, imgbbox.getY() + (int) y, imgbbox.getWidth(),
-					imgbbox.getHeight());
+			return imgbbox.clone();
 		}
 		return null;
 	}
@@ -936,7 +918,7 @@ public class JGObject {
 	JGRectangle last_center_tiles_copy = null;
 	JGPoint center_tile_copy = null;
 	JGPoint tl_tile_copy = null;
-	
+
 	public boolean shot = false;
 
 	/**
@@ -1406,7 +1388,7 @@ public class JGObject {
 		destroy();
 		is_alive = false;
 	}
-	
+
 	public void shot() {
 		shot = true;
 	}
@@ -1421,11 +1403,11 @@ public class JGObject {
 			eng.removeObject(this);
 		is_alive = false;
 	}
-	
+
 	public boolean isShot() {
 		return shot;
 	}
- 
+
 	/**
 	 * Override to implement object disposal code. This method is called at the
 	 * actual moment of removal.
