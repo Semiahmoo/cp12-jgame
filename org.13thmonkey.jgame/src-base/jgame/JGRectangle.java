@@ -43,8 +43,7 @@ public class JGRectangle {
 		return new JGRectangle(clonedDatas);
 	}
 
-	public JGRectangle(RectangleData[] inputs) {
-
+	public JGRectangle(RectangleData... inputs) {
 		for (RectangleData otherData : inputs)
 			datas.add(new RectangleData(otherData));
 		updateBoundingBox();
