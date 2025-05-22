@@ -56,7 +56,7 @@ public class JGRectangle {
 			if (dRight > right) {
 				right = dRight;
 			}
-			if (dHeight > dHeight) {
+			if (dHeight > bottom) {
 				bottom = dHeight;
 			}
 		}
