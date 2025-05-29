@@ -49,7 +49,7 @@ public class RectangleData {
 
 	@Override
 	public String toString() {
-		return "RectangleData [(" + x + ", " + y + ") + (" + width + "," + height + ")";
+		return String.format( "RectangleData [(%3d, %3d)  <%3d, %3d>)", x, y, width, height);
 	}
 
 	@Override
