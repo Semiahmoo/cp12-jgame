@@ -1,5 +1,7 @@
 package jgame;
 
+import java.util.List;
+
 import jgame.impl.Animation;
 //import java.awt.*;
 //import java.awt.image.ImageObserver;
@@ -1424,7 +1426,7 @@ public class JGObject {
 	/**
 	 * Override to handle collision; default is do nothing.
 	 */
-	public void hit(JGObject obj) {
+	public void hit(JGObject obj, List<RectangleOverlap> overlaps) {
 	}
 
 	/**

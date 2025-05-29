@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -15,6 +16,7 @@ import jgame.JGObject;
 import jgame.JGPoint;
 import jgame.JGRectangle;
 import jgame.JGTimer;
+import jgame.RectangleOverlap;
 
 /** Contains the platform-independent game logic. */
 public class EngineLogic {
@@ -1049,9 +1051,10 @@ public class EngineLogic {
 					continue;
 				if (!dsto.getBBox(dr))
 					continue;
-				if (sr.intersects(dr)) {
+				List<RectangleOverlap> intersects = sr.intersects(dr);
+				if (intersects != null) {
 					try {
-						dsto.hit(srco);
+						dsto.hit(srco, intersects);
 					} catch (JGameError ex) {
 						eng.exitEngine(eng.dbgExceptionToString(ex));
 					} catch (Exception ex) {
@@ -1078,7 +1081,7 @@ public class EngineLogic {
 				if (cidmask == 0 || (o.colid & cidmask) != 0) {
 					if (!o.getBBox(obj_bbox))
 						continue;
-					if (bbox.intersects(obj_bbox)) {
+					if (bbox.intersects(obj_bbox) != null) {
 						retcid |= o.colid;
 					}
 				}
@@ -1159,7 +1162,7 @@ public class EngineLogic {
 					if (bbox != null) {
 						if (!obj.getBBox(obj_bbox))
 							continue;
-						if (bbox.intersects(obj_bbox)) {
+						if (bbox.intersects(obj_bbox) != null) {
 							objects_v.addElement(obj);
 						}
 					} else {

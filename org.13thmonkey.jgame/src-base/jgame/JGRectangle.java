@@ -139,13 +139,18 @@ public class JGRectangle {
 		return datas;
 	}
 
-	public RectangleData getIntersecting(JGRectangle other) {
-		return datas.stream().flatMap(r -> other.datas.stream().filter((RectangleData r2) -> r.intersects(r2)))
-				.findFirst().orElse(null);
-	}
-
-	public boolean intersects(JGRectangle other) {
-		return getIntersecting(other) != null;
+	public List<RectangleOverlap> intersects(JGRectangle dest) {
+		List<RectangleOverlap> result = null;
+		for (RectangleData myData : datas) {
+			for (RectangleData destData : dest.datas) {
+				if (myData.intersects(destData)) {
+					if (result == null)
+						result = new ArrayList<>();
+					result.add(new RectangleOverlap(myData, destData));
+				}
+			}
+		}
+		return result;
 	}
 
 	public void debugMultiSet(String var, int value) {

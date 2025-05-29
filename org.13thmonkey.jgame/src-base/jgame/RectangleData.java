@@ -1,9 +1,7 @@
 package jgame;
 
 /**
- * 
  * @author Mr. Hapke
- *
  */
 public class RectangleData {
 
