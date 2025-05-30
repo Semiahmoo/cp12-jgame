@@ -4,11 +4,11 @@ package jgame;
  * @author Mr. Hapke
  */
 public class RectangleOverlap {
-	public final RectangleData srcBox;
-	public final RectangleData dstBox;
+	public final RectangleData thisBox;
+	public final RectangleData thatBox;
 
-	public RectangleOverlap(RectangleData srcBox, RectangleData dstBox) {
-		this.srcBox = srcBox;
-		this.dstBox = dstBox;
+	public RectangleOverlap(RectangleData thisBox, RectangleData thatBox) {
+		this.thisBox = thisBox;
+		this.thatBox = thatBox;
 	}
 }
