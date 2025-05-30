@@ -146,7 +146,8 @@ public class JGRectangle {
 				if (myData.intersects(destData)) {
 					if (result == null)
 						result = new ArrayList<>();
-					result.add(new RectangleOverlap(myData, destData));
+					// These need to be backwards. Don't understand why.
+					result.add(new RectangleOverlap(destData, myData));
 				}
 			}
 		}
