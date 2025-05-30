@@ -252,6 +252,10 @@ public class JGObject {
 		bbox = new JGRectangle(datas);
 	}
 
+	public void setBBoxMulti(List<RectangleData> datas) {
+		bbox = new JGRectangle(datas);
+	}
+
 	/** Clear bbox definition so that we use the image bbox again. */
 	public void clearBBox() {
 		bbox = null;

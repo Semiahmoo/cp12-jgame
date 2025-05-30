@@ -49,6 +49,12 @@ public class JGRectangle {
 		updateBoundingBox();
 	}
 
+	public JGRectangle(List<RectangleData> inputs) {
+		for (RectangleData otherData : inputs)
+			datas.add(new RectangleData(otherData));
+		updateBoundingBox();
+	}
+
 	private void updateBoundingBox() {
 		int xLeft = Integer.MAX_VALUE;
 		int yTop = Integer.MAX_VALUE;
