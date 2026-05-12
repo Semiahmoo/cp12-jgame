@@ -1,6 +1,5 @@
 package jgame.platform;
 
-import java.applet.Applet;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -12,6 +11,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Panel;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -19,12 +19,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -221,7 +220,7 @@ import jgame.impl.JGameError;
  * print to stdout.
  * 
  */
-public abstract class JGEngine extends Applet implements JGEngineInterface {
+public abstract class JGEngine extends Panel implements JGEngineInterface, ImageObserver {
 	private static final long serialVersionUID = -7811960246934582983L;
 
 	JREImage imageutil = new JREImage();
@@ -1355,7 +1354,6 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	 * Initialise engine; don't call directly. This is supposed to be called by the
 	 * applet viewer or the initer.
 	 */
-	@Override
 	public void init() {
 		jre.storeInit();
 		if (el.winwidth == 0) {
@@ -2306,15 +2304,15 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	@Override
 	public boolean hasAccelerometer() {
 		switch (accelGyroMode) {
-		case NativeLive:
-		case UdpLive:
-		case CommLive:
-			return true;
-		case None:
-		case UdpEnabled:
-		case NativeEnabled:
-		case CommEnabled:
-			return false;
+			case NativeLive:
+			case UdpLive:
+			case CommLive:
+				return true;
+			case None:
+			case UdpEnabled:
+			case NativeEnabled:
+			case CommEnabled:
+				return false;
 		}
 		return false;
 	}
@@ -2330,15 +2328,15 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	@Override
 	public boolean hasGyro() {
 		switch (accelGyroMode) {
-		case NativeLive:
-		case UdpLive:
-		case CommLive:
-			return true;
-		case None:
-		case UdpEnabled:
-		case NativeEnabled:
-		case CommEnabled:
-			return false;
+			case NativeLive:
+			case UdpLive:
+			case CommLive:
+				return true;
+			case None:
+			case UdpEnabled:
+			case NativeEnabled:
+			case CommEnabled:
+				return false;
 		}
 		return false;
 	}
@@ -2370,56 +2368,56 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 
 	private int getAccelAxisId() {
 		switch (DATA_CLUSTER_IN_USE) {
-		case ADC:
-			break;
-		case ArcadeButton:
-			break;
-		case CsGyroRelay:
-			break;
-		case JavaGyro:
-			return 1;
+			case ADC:
+				break;
+			case ArcadeButton:
+				break;
+			case CsGyroRelay:
+				break;
+			case JavaGyro:
+				return 1;
 		}
 		return 0;
 	}
 
 	private int getGyroAngleAxisId() {
 		switch (DATA_CLUSTER_IN_USE) {
-		case ADC:
-			break;
-		case ArcadeButton:
-			break;
-		case CsGyroRelay:
-			break;
-		case JavaGyro:
-			return 2;
+			case ADC:
+				break;
+			case ArcadeButton:
+				break;
+			case CsGyroRelay:
+				break;
+			case JavaGyro:
+				return 2;
 		}
 		return 0;
 	}
 
 	private int getGyroRotationAxisId() {
 		switch (DATA_CLUSTER_IN_USE) {
-		case ADC:
-			break;
-		case ArcadeButton:
-			break;
-		case CsGyroRelay:
-			break;
-		case JavaGyro:
-			return 3;
+			case ADC:
+				break;
+			case ArcadeButton:
+				break;
+			case CsGyroRelay:
+				break;
+			case JavaGyro:
+				return 3;
 		}
 		return 0;
 	}
 
 	private int getPitchRollAxisId() {
 		switch (DATA_CLUSTER_IN_USE) {
-		case ADC:
-			break;
-		case ArcadeButton:
-			break;
-		case CsGyroRelay:
-			break;
-		case JavaGyro:
-			return 4;
+			case ADC:
+				break;
+			case ArcadeButton:
+				break;
+			case CsGyroRelay:
+				break;
+			case JavaGyro:
+				return 4;
 		}
 		return 0;
 	}
@@ -2677,16 +2675,7 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 
 	@Override
 	public int invokeUrl(String url, String target) {
-		if (isApplet()) {
-			try {
-				getAppletContext().showDocument(new URL(url), target);
-			} catch (MalformedURLException e) {
-				return 0;
-			}
-			return -1;
-		} else {
-			return 0;
-		}
+		return 0;
 	}
 
 	void paintExitMessage(Graphics g) {
@@ -2910,36 +2899,6 @@ public abstract class JGEngine extends Applet implements JGEngineInterface {
 	@Override
 	public void disableAudio() {
 		jre.disableAudio();
-	}
-
-	@Override
-	public void defineAudioClip(String clipid, String filename) {
-		el.defineAudioClip(this, clipid, filename);
-	}
-
-	@Override
-	public String lastPlayedAudio(String channel) {
-		return jre.lastPlayedAudio(channel);
-	}
-
-	@Override
-	public void playAudio(String clipid) {
-		jre.playAudio(this, clipid);
-	}
-
-	@Override
-	public void playAudio(String channel, String clipid, boolean loop) {
-		jre.playAudio(this, channel, clipid, loop);
-	}
-
-	@Override
-	public void stopAudio(String channel) {
-		jre.stopAudio(channel);
-	}
-
-	@Override
-	public void stopAudio() {
-		jre.stopAudio();
 	}
 
 	/* ===== store ===== */

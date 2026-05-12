@@ -85,12 +85,10 @@ public class Example3 extends JGEngine {
 			if ( (x >  pfWidth()-16 && xspeed>0)
 			||   (x <            0  && xspeed<0) ) {
 				xspeed = -xspeed;
-				playAudio("bounce");
 			}
 			if ( (y > pfHeight()-16 && yspeed>0)
 			||   (y <            0  && yspeed<0) ) {
 				yspeed = -yspeed;
-				playAudio("bounce");
 			}
 			// Make pacman face left or right, depending on X direction.
 			if (xspeed < 0) setGraphic("myanim_l"); else setGraphic("myanim_r");

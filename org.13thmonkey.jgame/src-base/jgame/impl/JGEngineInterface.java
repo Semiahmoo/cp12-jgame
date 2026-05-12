@@ -1622,7 +1622,8 @@ public interface JGEngineInterface {
 	public boolean hasAccelerometer();
 
 	/**
-	 * returns true if the cluster has a data point for that InputType Hacked up by Mr. Hapke
+	 * returns true if the cluster has a data point for that InputType Hacked up by
+	 * Mr. Hapke
 	 */
 	public boolean isSensorActive(InputType it);
 
@@ -1664,7 +1665,7 @@ public interface JGEngineInterface {
 
 	/** get accel/gyroscope twist angle (positive = ccw) */
 	public double getYaw();
-	
+
 	/** get double[3] vector representing overall rotation Pitch-Roll-Yaw */
 	public double[] getPitchRollYawVec();
 
@@ -1676,7 +1677,7 @@ public interface JGEngineInterface {
 
 	/** get double[3] vector representing rotation/second */
 	public double[] getGyroVec();
-	
+
 	/** get double[3] vector representing tilt */
 	public double[] getGyroAngleVec();
 
@@ -1852,44 +1853,6 @@ public interface JGEngineInterface {
 	 * will be restarted once audio is enabled again.
 	 */
 	public void disableAudio();
-
-	/**
-	 * Associate given clipid with a filename. Files are loaded from the resource
-	 * path. Java 1.2+ supports at least: midi and wav files.
-	 */
-	public void defineAudioClip(String clipid, String filename);
-
-	/**
-	 * Returns the audioclip that was last played, null if audio was stopped with
-	 * stopAudio. Note the clip does not actually have to be playing; it might have
-	 * finished playing already.
-	 */
-	public String lastPlayedAudio(String channel);
-
-	/**
-	 * Play audio clip on unnamed channel, which means it will not replace another
-	 * clip, and cannot be stopped. The clip is not looped. When this method is
-	 * called multiple times with the same sample within the same frame, it is
-	 * played only once.
-	 */
-	public void playAudio(String clipid);
-
-	/**
-	 * Play clip on channel with given name. Will replace any other clip already
-	 * playing on the channel. Will restart if the clip is already playing
-	 * <i>and</i> either this call or the already playing one are <i>not</i>
-	 * specified as looping. If both are looping, the looped sound will continue
-	 * without restarting. If you want the looping sound to be restarted, call
-	 * stopAudio first. Note the channel "music" is reserved for enabling/disabling
-	 * music separately in future versions.
-	 */
-	public void playAudio(String channel, String clipid, boolean loop);
-
-	/** Stop one audio channel. */
-	public void stopAudio(String channel);
-
-	/** Stop all audio channels. */
-	public void stopAudio();
 
 	/* ===== store ===== */
 

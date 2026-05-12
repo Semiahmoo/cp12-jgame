@@ -1,21 +1,39 @@
 package jgame.platform;
 
-import jgame.impl.*;
-import jgame.*;
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.awt.image.*;
-import java.applet.*;
-import java.awt.event.*;
-import javax.swing.ListCellRenderer;
-import javax.swing.JList;
-import java.net.*;
-import java.util.*;
-import java.io.*;
-import java.lang.reflect.*;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Window;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
-import java.awt.event.*;
+import jgame.JGPoint;
+import jgame.impl.EngineLogic;
+import jgame.impl.JGEngineInterface;
+import jgame.impl.JGameError;
 
 /**
  * Basic engine functionality for JRE platforms: input handling, audio, window,
@@ -512,7 +530,6 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	 * channelname -} clipid -} AudioClip. Clipid and AudioClip are not defined
 	 * until played at least once.
 	 */
-	Hashtable<String, Hashtable<String, AudioClip>> channels = new Hashtable<String, Hashtable<String, AudioClip>>();
 
 	/** channelname -} clipid. Sample has been played last as non-loop. */
 	Hashtable<String, String> lastplayed = new Hashtable<String, String>();
@@ -528,7 +545,7 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	int unnamedchnr = 0;
 	int nr_unnamedch = 12;
 
-	boolean audioenabled = true;
+	boolean audioenabled = false;
 
 	/** signal to audio subsystem that new frame has started. */
 	void audioNewFrame() {
@@ -537,19 +554,6 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 
 	/** Enable audio, restart any audio loops. */
 	public void enableAudio() {
-		if (audioenabled == true)
-			return;
-		audioenabled = true;
-		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
-			String channel = e.nextElement();
-			String lastclipid = (String) islooping.get(channel);
-			if (lastclipid == null)
-				continue;
-			Hashtable<String, AudioClip> chan = channels.get(channel);
-			AudioClip clip = chan.get(lastclipid);
-			if (clip != null)
-				clip.loop();
-		}
 	}
 
 	/**
@@ -560,104 +564,8 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	public void disableAudio() {
 		if (audioenabled == false)
 			return;
-		audioenabled = false;
-		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
-			String channel = e.nextElement();
-			String lastclipid = lastplayed.get(channel);
-			if (lastclipid == null)
-				continue;
-			Hashtable<String, AudioClip> chan = channels.get(channel);
-			AudioClip clip = (AudioClip) chan.get(lastclipid);
-			if (clip != null)
-				clip.stop();
-		}
 	}
 
-	private AudioClip loadAudioClip(Applet applet, String clipid) {
-		URL clipres = getClass().getResource(el.audioclips.get(clipid));
-		AudioClip clip;
-		if (eng.isApplet()) {
-			clip = applet.getAudioClip(clipres);
-		} else {
-			clip = Applet.newAudioClip(clipres);
-		}
-		return clip;
-	}
-
-	public String lastPlayedAudio(String channel) {
-		return (String) lastplayed.get(channel);
-	}
-
-	public void playAudio(Applet applet, String clipid) {
-		if (clipstriggered.containsKey(clipid))
-			return;
-		clipstriggered.put(clipid, "yes");
-		playAudio(applet, "_unnamed" + unnamedchnr, clipid, false);
-		unnamedchnr = (unnamedchnr + 1) % nr_unnamedch;
-	}
-
-	public void playAudio(Applet applet, String channel, String clipid, boolean loop) {
-		AudioClip clip = null;
-		Hashtable<String, AudioClip> chan = channels.get(channel);
-		String clipplaying = lastplayed.get(channel);
-		if (chan != null) {
-			clip = chan.get(clipid);
-		} else {
-			chan = new Hashtable<String, AudioClip>();
-			channels.put(channel, chan);
-		}
-		if (clip == null) {
-			clip = loadAudioClip(applet, clipid);
-			chan.put(clipid, clip);
-		}
-		boolean restart = true;
-		if (clipplaying != null && !clipplaying.equals(clipid)) {
-			AudioClip prevclip = (AudioClip) chan.get(clipplaying);
-			if (audioenabled)
-				prevclip.stop();
-		} else {
-			// previous clip is same as this one
-			String looping = (String) islooping.get(channel);
-			if (loop && looping != null && looping.equals(clipid)) {
-				// both are looping, don't do anything
-				restart = false;
-			} else {
-				// other is not looping, restart
-				restart = true;
-			}
-		}
-		if (loop) {
-			if (restart) {
-				if (audioenabled)
-					clip.loop();
-				islooping.put(channel, clipid);
-			}
-		} else {
-			if (audioenabled)
-				clip.play();
-			islooping.remove(channel);
-		}
-		lastplayed.put(channel, clipid);
-	}
-
-	public void stopAudio(String channel) {
-		String lastclipid = lastplayed.get(channel);
-		if (lastclipid == null)
-			return;
-		Hashtable<String, AudioClip> chan = channels.get(channel);
-		AudioClip clip =  chan.get(lastclipid);
-		if (clip != null)
-			if (audioenabled)
-				clip.stop();
-		lastplayed.remove(channel);
-		islooping.remove(channel);
-	}
-
-	public void stopAudio() {
-		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
-			stopAudio(e.nextElement());
-		}
-	}
 
 	String localstorefile;
 
