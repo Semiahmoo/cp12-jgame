@@ -30,6 +30,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.sound.SoundClip;
+
 import jgame.JGPoint;
 import jgame.impl.EngineLogic;
 import jgame.impl.JGEngineInterface;
@@ -530,6 +532,7 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	 * channelname -} clipid -} AudioClip. Clipid and AudioClip are not defined
 	 * until played at least once.
 	 */
+	Hashtable<String, Hashtable<String, SoundClip>> channels = new Hashtable<>();
 
 	/** channelname -} clipid. Sample has been played last as non-loop. */
 	Hashtable<String, String> lastplayed = new Hashtable<String, String>();
@@ -545,7 +548,7 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	int unnamedchnr = 0;
 	int nr_unnamedch = 12;
 
-	boolean audioenabled = false;
+	boolean audioenabled = true;
 
 	/** signal to audio subsystem that new frame has started. */
 	void audioNewFrame() {
@@ -554,6 +557,19 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 
 	/** Enable audio, restart any audio loops. */
 	public void enableAudio() {
+		if (audioenabled == true)
+			return;
+		audioenabled = true;
+		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
+			String channel = e.nextElement();
+			String lastclipid = (String) islooping.get(channel);
+			if (lastclipid == null)
+				continue;
+			Hashtable<String, SoundClip> chan = channels.get(channel);
+			SoundClip clip = chan.get(lastclipid);
+			if (clip != null)
+				clip.loop();
+		}
 	}
 
 	/**
@@ -564,8 +580,105 @@ class JREEngine implements MouseListener, MouseMotionListener, FocusListener, Ke
 	public void disableAudio() {
 		if (audioenabled == false)
 			return;
+		audioenabled = false;
+		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
+			String channel = e.nextElement();
+			String lastclipid = lastplayed.get(channel);
+			if (lastclipid == null)
+				continue;
+			Hashtable<String, SoundClip> chan = channels.get(channel);
+			SoundClip clip = chan.get(lastclipid);
+			if (clip != null)
+				clip.stop();
+		}
 	}
 
+	private SoundClip loadAudioClip(String clipid) {
+		URL clipres = getClass().getResource(el.audioclips.get(clipid));
+		File f = new File(clipres.getPath());
+		SoundClip clip = null;
+		try {
+			clip = SoundClip.createSoundClip(f);
+		} catch (Exception e) {
+		}
+
+		return clip;
+	}
+
+	public String lastPlayedAudio(String channel) {
+		return (String) lastplayed.get(channel);
+	}
+
+	public void playAudio(String clipid) {
+		if (clipstriggered.containsKey(clipid))
+			return;
+		clipstriggered.put(clipid, "yes");
+		playAudio("_unnamed" + unnamedchnr, clipid, false);
+		unnamedchnr = (unnamedchnr + 1) % nr_unnamedch;
+	}
+
+	public void playAudio(String channel, String clipid, boolean loop) {
+		SoundClip clip = null;
+		Hashtable<String, SoundClip> chan = channels.get(channel);
+		String clipplaying = lastplayed.get(channel);
+		if (chan != null) {
+			clip = chan.get(clipid);
+		} else {
+			chan = new Hashtable<>();
+			channels.put(channel, chan);
+		}
+		if (clip == null) {
+			clip = loadAudioClip(clipid);
+			chan.put(clipid, clip);
+		}
+		boolean restart = true;
+		if (clipplaying != null && !clipplaying.equals(clipid)) {
+			SoundClip prevclip = chan.get(clipplaying);
+			if (audioenabled)
+				prevclip.stop();
+		} else {
+			// previous clip is same as this one
+			String looping = islooping.get(channel);
+			if (loop && looping != null && looping.equals(clipid)) {
+				// both are looping, don't do anything
+				restart = false;
+			} else {
+				// other is not looping, restart
+				restart = true;
+			}
+		}
+		if (loop) {
+			if (restart) {
+				if (audioenabled)
+					clip.loop();
+				islooping.put(channel, clipid);
+			}
+		} else {
+			if (audioenabled)
+				clip.play();
+			islooping.remove(channel);
+		}
+		lastplayed.put(channel, clipid);
+	}
+
+	public void stopAudio(String channel) {
+		String lastclipid = lastplayed.get(channel);
+		if (lastclipid == null)
+			return;
+		Hashtable<String, SoundClip> chan = channels.get(channel);
+		SoundClip clip = chan.get(lastclipid);
+		if (clip != null)
+			if (audioenabled)
+				clip.stop();
+		lastplayed.remove(channel);
+		islooping.remove(channel);
+	}
+
+	public void stopAudio() {
+		for (Enumeration<String> e = channels.keys(); e.hasMoreElements();) {
+			stopAudio(e.nextElement());
+		}
+	}
 
 	String localstorefile;
 

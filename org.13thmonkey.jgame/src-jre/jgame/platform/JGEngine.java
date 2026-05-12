@@ -19,11 +19,12 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -220,7 +221,7 @@ import jgame.impl.JGameError;
  * print to stdout.
  * 
  */
-public abstract class JGEngine extends Panel implements JGEngineInterface, ImageObserver {
+public abstract class JGEngine extends Panel implements JGEngineInterface {
 	private static final long serialVersionUID = -7811960246934582983L;
 
 	JREImage imageutil = new JREImage();
@@ -2673,11 +2674,6 @@ public abstract class JGEngine extends Panel implements JGEngineInterface, Image
 		}
 	}
 
-	@Override
-	public int invokeUrl(String url, String target) {
-		return 0;
-	}
-
 	void paintExitMessage(Graphics g) {
 		try {
 			setFont(g, debugmessage_font);
@@ -2899,6 +2895,36 @@ public abstract class JGEngine extends Panel implements JGEngineInterface, Image
 	@Override
 	public void disableAudio() {
 		jre.disableAudio();
+	}
+
+	@Override
+	public void defineAudioClip(String clipid, String filename) {
+		el.defineAudioClip(this, clipid, filename);
+	}
+
+	@Override
+	public String lastPlayedAudio(String channel) {
+		return jre.lastPlayedAudio(channel);
+	}
+
+	@Override
+	public void playAudio(String clipid) {
+		jre.playAudio(clipid);
+	}
+
+	@Override
+	public void playAudio(String channel, String clipid, boolean loop) {
+		jre.playAudio(channel, clipid, loop);
+	}
+
+	@Override
+	public void stopAudio(String channel) {
+		jre.stopAudio(channel);
+	}
+
+	@Override
+	public void stopAudio() {
+		jre.stopAudio();
 	}
 
 	/* ===== store ===== */

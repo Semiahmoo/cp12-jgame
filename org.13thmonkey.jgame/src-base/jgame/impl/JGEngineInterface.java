@@ -1721,13 +1721,6 @@ public interface JGEngineInterface {
 	 */
 	public String getConfigPath(String filename);
 
-	/**
-	 * Execute or go to URL (action depends on file type).
-	 * 
-	 * @return 0 if fail; 1 if success; -1 if the status is unknown
-	 */
-	public int invokeUrl(String url, String target);
-
 	/* computation */
 
 	/**
@@ -1853,6 +1846,44 @@ public interface JGEngineInterface {
 	 * will be restarted once audio is enabled again.
 	 */
 	public void disableAudio();
+
+	/**
+	 * Associate given clipid with a filename. Files are loaded from the resource
+	 * path. Java 1.2+ supports at least: midi and wav files.
+	 */
+	public void defineAudioClip(String clipid, String filename);
+
+	/**
+	 * Returns the audioclip that was last played, null if audio was stopped with
+	 * stopAudio. Note the clip does not actually have to be playing; it might have
+	 * finished playing already.
+	 */
+	public String lastPlayedAudio(String channel);
+
+	/**
+	 * Play audio clip on unnamed channel, which means it will not replace another
+	 * clip, and cannot be stopped. The clip is not looped. When this method is
+	 * called multiple times with the same sample within the same frame, it is
+	 * played only once.
+	 */
+	public void playAudio(String clipid);
+
+	/**
+	 * Play clip on channel with given name. Will replace any other clip already
+	 * playing on the channel. Will restart if the clip is already playing
+	 * <i>and</i> either this call or the already playing one are <i>not</i>
+	 * specified as looping. If both are looping, the looped sound will continue
+	 * without restarting. If you want the looping sound to be restarted, call
+	 * stopAudio first. Note the channel "music" is reserved for enabling/disabling
+	 * music separately in future versions.
+	 */
+	public void playAudio(String channel, String clipid, boolean loop);
+
+	/** Stop one audio channel. */
+	public void stopAudio(String channel);
+
+	/** Stop all audio channels. */
+	public void stopAudio();
 
 	/* ===== store ===== */
 
