@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.13thmonkey</groupId>
   <artifactId>jgame</artifactId>
-  <version>3.6.3-SNAPSHOT</version>
+  <version>3.6.4-SNAPSHOT</version>
   <dependencies>
 		<dependency>
 			<groupId>ca.hapke</groupId>
