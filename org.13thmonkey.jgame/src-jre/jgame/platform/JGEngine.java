@@ -243,7 +243,7 @@ public abstract class JGEngine extends Panel implements JGEngineInterface {
 	 */
 	boolean i_am_applet = false;
 
-	/// ** Keycode of cursor key. */
+	/// Keycode of cursor key. 
 	// public static final int KeyUp=38,KeyDown=40,KeyLeft=37,KeyRight=39;
 	// public static final int KeyShift=16;
 	// public static final int KeyCtrl=17;
@@ -252,7 +252,7 @@ public abstract class JGEngine extends Panel implements JGEngineInterface {
 	// public static final int KeyEnter=10;
 	public static final int KeyBackspace = KeyEvent.VK_BACK_SPACE;
 	public static final int KeyTab = KeyEvent.VK_TAB;
-	/// ** Keymap equivalent of mouse button. */
+	/// Keymap equivalent of mouse button.
 	// public static final int KeyMouse1=256, KeyMouse2=257, KeyMouse3=258;
 
 	protected Graphics buf_gfx = null;
@@ -336,6 +336,12 @@ public abstract class JGEngine extends Panel implements JGEngineInterface {
 	@Override
 	public void defineImageRotated(String name, String tilename, int collisionid, String srcname, double angle) {
 		el.defineImageRotated(this, name, tilename, collisionid, srcname, angle);
+	}
+
+	@Override
+	public void defineImageScaled(String name, String tilename, int collisionid, String srcname, int width,
+			int height) {
+		el.defineImageScaled(this, name, tilename, collisionid, srcname, width, height);
 	}
 
 	@Override
@@ -861,7 +867,7 @@ public abstract class JGEngine extends Panel implements JGEngineInterface {
 							sx2 = sx1 + el.viewnrtilesx;
 						copyBGToBuf(bufg, sx1, sy1, sx2, sy2, 0, bufmidy);
 						// Color defaultcolour=g.getColor();
-						/// * sort objects */
+						/// * sort objects *
 						// ArrayList sortedkeys = new
 						// ArrayList(el.objects.keySet());
 						// Collections.sort(sortedkeys);

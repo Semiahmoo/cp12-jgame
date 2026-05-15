@@ -203,6 +203,12 @@ public interface JGEngineInterface {
 	public void defineImageRotated(String imgname, String tilename, int collisionid, String srcimg, double angle);
 
 	/**
+	 * Define new image by scaling an already loaded image.
+	 */
+	public void defineImageScaled(String imgname, String tilename, int collisionid, String srcimg, int width,
+			int height);
+
+	/**
 	 * Define new sprite/tile image from a data array. If an image with this id is
 	 * already defined, it is removed from any caches, so that the old image is
 	 * really unloaded. This can be used to load large (background) images on

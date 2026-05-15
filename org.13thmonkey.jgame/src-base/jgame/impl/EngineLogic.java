@@ -97,40 +97,40 @@ public class EngineLogic {
 	public boolean is_exited = false;
 	public String exit_message = "JGEngine exited successfully";
 
-	Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
+	Hashtable<String, Animation> animations = new Hashtable<>();
 
 	/* images */
 
 	/**
 	 * Strings -&gt; JGImages, original size, nonexistence means there is no image
 	 */
-	public Hashtable<String, JGImage> images_orig = new Hashtable<String, JGImage>();
+	public Hashtable<String, JGImage> images_orig = new Hashtable<>();
 	/** JGPoint sizes of original images */
-	public Hashtable<String, JGPoint> image_orig_size = new Hashtable<String, JGPoint>();
+	public Hashtable<String, JGPoint> image_orig_size = new Hashtable<>();
 	/**
 	 * Strings -&gt; JGImages, screen size, nonexistence indicates image is not
 	 * cached and needs to be generated from images_orig
 	 */
-	public Hashtable<String, JGImage> images = new Hashtable<String, JGImage>();
+	public Hashtable<String, JGImage> images = new Hashtable<>();
 
 	/** indicates that image is defined even if it has no Image */
-	public Hashtable<String, String> images_exists = new Hashtable<String, String>();
-	public Hashtable<Integer, String> images_transp = new Hashtable<Integer, String>();
+	public Hashtable<String, String> images_exists = new Hashtable<>();
+	public Hashtable<Integer, String> images_transp = new Hashtable<>();
 	/**
 	 * Hashtable: name to filename. Indicates that image with given name is loaded
 	 * from given filename
 	 */
-	public Hashtable<String, Object> images_loaded = new Hashtable<String, Object>();
+	public Hashtable<String, String> images_loaded = new Hashtable<>();
 	/* Integers -> Objects, existence indicates transparency */
-	public Hashtable<Integer, String> images_tile = new Hashtable<Integer, String>(); /* Integers -> Strings */
-	public Hashtable<String, JGRectangle> images_bbox = new Hashtable<String, JGRectangle>(); /*
+	public Hashtable<Integer, String> images_tile = new Hashtable<>(); /* Integers -> Strings */
+	public Hashtable<String, JGRectangle> images_bbox = new Hashtable<>(); /*
 																								 * Strings -> Rectangles
 																								 */
-	public Hashtable<Integer, Integer> images_tilecid = new Hashtable<Integer, Integer>(); /*
+	public Hashtable<Integer, Integer> images_tilecid = new Hashtable<>(); /*
 																							 * Integers -> Integers
 																							 */
 
-	public Hashtable<String, ImageMap> imagemaps = new Hashtable<String, ImageMap>(); /* Strings->ImageMaps */
+	public Hashtable<String, ImageMap> imagemaps = new Hashtable<>(); /* Strings->ImageMaps */
 
 	public int alpha_thresh = 128;
 	public JGColor render_bg_color = null; // null means use bg_color
@@ -648,13 +648,27 @@ public class EngineLogic {
 		if (images_exists.containsKey(name)) {
 			undefineImage(name);
 		}
-		String imgfile = (String) images_loaded.get(srcname);
+		String imgfile = images_loaded.get(srcname);
 		if (imgfile.equals("null"))
 			throw new JGameError("Source image '" + srcname + "' does not have a filename.", true);
 
 		imgfile = getAbsolutePath(pkg_obj, imgfile);
 		JGImage img = imageutil.loadImage(imgfile);
 		defineImage(name, tilename, collisionid, img.rotateAny(angle), "-", 0, 0, -1, -1);
+	}
+	
+	public void defineImageScaled(Object pkg_obj, String name, String tilename, int collisionid, String srcname,
+			int width, int height) {
+		if (images_exists.containsKey(name)) {
+			undefineImage(name);
+		}
+		String imgfile = images_loaded.get(srcname);
+		if (imgfile.equals("null"))
+			throw new JGameError("Source image '" + srcname + "' does not have a filename.", true);
+
+		imgfile = getAbsolutePath(pkg_obj, imgfile);
+		JGImage img = imageutil.loadImage(imgfile);
+		defineImage(name, tilename, collisionid, img.scale(width, height), "-", 0, 0, -1, -1);
 	}
 
 	public void defineImageMap(Object pkg_obj, String mapname, String imgfile, int xofs, int yofs, int tilex, int tiley,
@@ -664,7 +678,7 @@ public class EngineLogic {
 	}
 
 	public JGRectangle getImageBBox(String imgname) {
-		return (JGRectangle) images_bbox.get(imgname);
+		return images_bbox.get(imgname);
 	}
 
 	/* ====== image from engine ====== */
